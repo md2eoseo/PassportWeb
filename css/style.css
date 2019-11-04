@@ -1,0 +1,144 @@
+@charset "utf-8";
+
+@keyframes scale {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+}
+
+@keyframes article_hover {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+/* Reset CSS */
+* { margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+a { outline: 0; text-decoration: none; color: #000; }
+img { border: 0; }
+body { font: 12px 'Poiret One'; color: #000; 
+/* background image 1000 x 667 */
+background: url('../img/background.jpg');
+background-size: 1580px;
+}
+
+/* -----------------------------------------------------------------layout------------------------------------------------------------------ */
+/* header */
+header {
+    position: fixed;
+    border-right: 3px solid #000;
+    width: 180px;
+    height: auto;
+    padding: 0 10px;
+    background: #fff;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    z-index: 1000;
+    overflow: hidden;
+    transition: all 0.5s;
+}
+
+#logo {
+    text-align: center;
+    font-size: 36px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#user_info {
+    height: 200px;
+    border: thin dotted black;
+    margin-bottom: 8px;
+}
+
+#user_sign {
+    margin-top: 3px;
+    margin-left: 5px;
+    height: 40px;
+}
+
+#user_sign div {
+    display: inline-block;
+    font-size: 16px;
+    width: 80px;
+    height: 40px;
+    padding-top: 5px;
+    border: thin dotted black;
+    text-align: center;
+}
+
+#searchbar {
+    margin-bottom: 40px;
+}
+
+#search_text {
+    width: 150px;
+}
+
+.menu_group {
+    width: 180px; 
+}
+
+.menu_group a {
+    background-color: #eee; /* Grey background color */
+    color: black; /* Black text color */
+    display: block; /* Make the links appear below each other */
+    padding: 12px; /* Add some padding */
+    text-decoration: none; /* Remove underline from links */
+    font-size: 18px;
+    padding-left: 18px;
+}
+  
+.menu_group a:hover {
+    background-color: #ccc; /* Dark grey background on mouse-over */
+}
+
+.sns_group {
+    font-size: 20px;
+    margin-top: 140px;
+    margin-left: 50px;
+}
+
+/* section */
+section {
+    position: relative;
+    margin-left: 205px;
+    padding-top: 2%;
+}
+
+article {
+    border: 2px solid #000;
+    margin: 3px;
+    background-color: #fff;
+    opacity: 0.5;
+    animation: scale 1s 1;
+    /* data들어오기전 */
+    text-align: center;
+    color: #000;
+    font-size: 5em;
+    padding-top: 30px;
+    box-sizing: border-box;
+}
+
+article.article_block {
+    float: left;
+    width: 28%;
+    height: 300px;
+}
+
+article.article_block:hover {
+    width: 28%;
+    height: 300px;
+    /* animation: article_hover 0.5s 1; */
+}
+
+article.article_top {
+    margin-top: 70px;
+}
+
+article.signup_block {
+    float: right;
+    width: 38%;
+    height: 680px;
+    margin-right: 20px;
+}
