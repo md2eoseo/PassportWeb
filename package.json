@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/md2eoseo/PassportWeb#readme",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "jade": "^1.11.0",
+    "mongoskin": "^2.1.0"
   }
 }
