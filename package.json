@@ -1,0 +1,26 @@
+{
+  "name": "passportweb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/md2eoseo/PassportWeb.git"
+  },
+  "keywords": [
+    "Passport",
+    "WebProject"
+  ],
+  "author": "md2eoseo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/md2eoseo/PassportWeb/issues"
+  },
+  "homepage": "https://github.com/md2eoseo/PassportWeb#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
