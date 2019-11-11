@@ -25,7 +25,8 @@
     "express": "^4.17.1",
     "jade": "^1.11.0",
     "jquery": "^3.4.1",
-    "mongoskin": "^2.1.0"
+    "mongoskin": "^2.1.0",
+    "pug": "^2.0.4"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
