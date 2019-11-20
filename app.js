@@ -27,8 +27,8 @@ function connectDB() {
 // Express.js 객체 초기화
 var app = express();
 // Handles post requests
-// app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // body parsing
+// app.use(bodyParser.json());
 // 개발자 도구 html 정리
 app.locals.pretty = true;
 
