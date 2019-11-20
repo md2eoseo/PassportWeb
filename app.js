@@ -69,20 +69,30 @@ var authUser = function (db, id, password, callback) {
  
 var signup = function (db, id, password, name, mail, callback) {
     var members = db.collection('members');
-
-    members.insertOne({ "id": id, "password": password, "name": name, "mail": mail },
-        function (err, result) {
-            if (err) {
-                callback(err, null);
-                return;
-            }
-            if (result.insertedCount > 0) {
-                callback(null, result);
-            } else {
-                callback(null, null);
-            }
+    members.findOne({ "id": id }, function(err, member){
+        console.log('same member exist?? ' + member);
+        if(err) {
+            callback(err, null);
+            return;
         }
-    );
+        if (member == null) {
+            members.insertOne({ "id": id, "password": password, "name": name, "mail": mail },
+                function (err, result) {
+                    if (err) {
+                        callback(err, null);
+                        return;
+                    }
+                    if (result.insertedCount > 0) {
+                        callback(null, result);
+                    } else {
+                        callback(null, null);
+                    }
+                }
+            );
+        } else {
+            callback(null, null);
+        }
+    });
 };
 
 
