@@ -67,7 +67,7 @@ var authUser = function (db, id, password, callback) {
 var signup = function (db, id, password, name, mail, callback) {
     var members = db.collection('members');
 
-    members.insertMany([{ "id": id, "password": password, "name": name, "mail": mail }],
+    members.insertOne({ "id": id, "password": password, "name": name, "mail": mail },
         function (err, result) {
             if (err) {
                 callback(err, null);
