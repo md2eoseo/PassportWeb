@@ -122,11 +122,18 @@ app.post('/login', function (req, res) {
                     }
                     if (docs) {
                         console.dir(docs);
-                        res.render('post', { msg: '로그인 성공!!' });
+                        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                        res.write('<h1>Login Success</h1>');
+                        res.write('<h1> user </h1>' + docs);
+                        res.write('<a href="/login"> re login </a>');
+                        res.end();
                     }
                     else {
                         console.log('Login Error!!');
-                        res.render('login', { msg: '잘못된 아이디 또는 비밀번호입니다...' });
+                        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                        res.write('<h1>No user!!</h1>');
+                        res.write('<a href="/login"> re login</a>');
+                        res.end();
                     }
                 } else {
                     console.log('DB Connect Error!!');
@@ -161,10 +168,17 @@ app.post('/signup', function (req, res) {
                 }
                 if (result) {
                     console.dir(result);
-                    res.render('login', { msg : "회원가입 성공!!" });
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>Add Success</h1>');
+                    res.write('<h1>' + result + '</h1>');
+                    res.write('<a href="/login">login</a>');
+                    res.end();
                 } else {
-                    console.log('Signup Same Memeber Error!!');
-                    res.render('signup', { msg : "이미 등록된 아이디입니다..." });
+                    console.log('Signup Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>same user exist</h1>');
+                    res.write('<a href="/signup"> re signup</a>');
+                    res.end();
                 }
             }
         );

@@ -30,19 +30,20 @@ html
       }
 
   body
+    div.msg #{ msg }
     #wrap
       .container
         h1.page-header= appTitle
         p.lead Welcome to Passport by&nbsp;
           a(href="https://www.instagram.com/2eoseo") @md2eoseo
-          |. Please enjoy.
+          |
         br
         block page
         block header
           div
             include includes/menu
         block alert
-          div.alert.alert-warning.hidden
+          div.alert.alert-warning.hidden #{ msg }
         br
         .content
           block content

@@ -10,5 +10,7 @@
       li
         a(href="/logout") Logout
     else
+      li(class=(menu === 'signup')?'active':'')
+        a(href='/signup') SignUp
       li(class=(menu === 'login')?'active':'')
         a(href='/login') Login
