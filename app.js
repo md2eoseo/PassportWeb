@@ -4,6 +4,7 @@ var http = require('http');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mongoClient = require('mongodb').MongoClient;
+// var compression = require('compression');
 
 // DB 연결
 var db;
@@ -26,8 +27,7 @@ function connectDB() {
 
 // Express.js 객체 초기화
 var app = express();
-// Handles post requests
-app.use(bodyParser.urlencoded({ extended: true })); // body parsing
+
 // app.use(bodyParser.json());
 // 개발자 도구 html 정리
 app.locals.pretty = true;
@@ -38,6 +38,9 @@ app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(express.static('public'));
+// Handles post requests body parsing
+app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(compression());
 
 // 라우터 모듈 사용
 // var router = express.Router();
