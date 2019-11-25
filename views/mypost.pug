@@ -1,10 +1,10 @@
 extends layout
 
 block page
-  - var menu = 'admin'
+  - var menu = 'mypost'
 
 block content
-  div.admin  
+  div.mypost
     //- if (articles.length === 0 )
     if (1)
       p
@@ -28,4 +28,4 @@ block content
                 button.btn.btn-default.btn-sm.publish(type="button")
                   span.glyphicon(class=(article.published)?"glyphicon-pause":"glyphicon-play", title=(article.published)?"Unpublish":"Publish")
               td= article.title
-      script(type="text/javascript", src="js/admin.js")
+      script(type="text/javascript", src="js/list.js")

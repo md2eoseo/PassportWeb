@@ -1,10 +1,12 @@
 // 의존 모듈 포함
-var express = require('express');
-var http = require('http');
-var path = require('path');
-var bodyParser = require('body-parser');
-var mongoClient = require('mongodb').MongoClient;
+const express = require('express');
+const http = require('http');
+const path = require('path');
+const bodyParser = require('body-parser');
+const mongoClient = require('mongodb').MongoClient;
 // var compression = require('compression');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 
 // DB 연결
 var db;
@@ -26,9 +28,8 @@ function connectDB() {
 }
 
 // Express.js 객체 초기화
-var app = express();
+const app = express();
 
-// app.use(bodyParser.json());
 // 개발자 도구 html 정리
 app.locals.pretty = true;
 
@@ -40,7 +41,14 @@ app.set('view engine', 'pug');
 app.use(express.static('public'));
 // Handles post requests body parsing
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 // app.use(compression());
+app.use(session({
+    secret: '@#@$2eoseo#@$#$',
+    resave: false,
+    saveUninitialized: true,
+    store: new FileStore()
+   }));
 
 // 라우터 모듈 사용
 // var router = express.Router();
@@ -110,8 +118,8 @@ app.get('/post', function(req, res){
     res.render('post', { appTitle: 'Passport' });
 });
 
-app.get('/admin', function(req, res){
-    res.render('admin', { appTitle: 'Passport' });
+app.get('/mypost', function(req, res){
+    res.render('mypost', { appTitle: 'Passport' });
 });
 
 app.get('/login', function(req, res){
@@ -125,6 +133,7 @@ app.post('/login', function (req, res) {
     if (db) {
         authUser(db, paramID, paramPW,
             function (err, docs) {
+                var sess = req.session;
                 if (db) {
                     if (err) {
                         console.log('Login Error!!');
@@ -134,12 +143,22 @@ app.post('/login', function (req, res) {
                         return;
                     }
                     if (docs) {
+                        sess.login = true;
+                        sess.userid = paramID;
                         console.dir(docs);
-                        res.render('post', { msg: '로그인 성공!!' });
+                        res.render('post', {
+                            appTitle: 'Passport',
+                            login: sess.login,
+                            userid: sess.userid,
+                            msg: '로그인 성공!!' 
+                        });
                     }
                     else {
                         console.log('Login Error!!');
-                        res.render('login', { msg: '잘못된 아이디 또는 비밀번호입니다...' });
+                        res.render('login', {
+                            appTitle: 'Passport',
+                            msg: '잘못된 아이디 또는 비밀번호입니다...' 
+                        });
                     }
                 } else {
                     console.log('DB Connect Error!!');
@@ -174,10 +193,16 @@ app.post('/signup', function (req, res) {
                 }
                 if (result) {
                     console.dir(result);
-                    res.render('login', { msg : "회원가입 성공!!" });
+                    res.render('login', {
+                        appTitle: 'Passport',
+                        msg: '회원가입 성공!!!' 
+                    });
                 } else {
                     console.log('Signup Same Memeber Error!!');
-                    res.render('signup', { msg : "이미 등록된 아이디입니다..." });
+                    res.render('signup', {
+                        appTitle: 'Passport',
+                        msg: '이미 등록된 아이디입니다...' 
+                    });
                 }
             }
         );
@@ -189,8 +214,25 @@ app.post('/signup', function (req, res) {
     }
 });
 
-app.get('/logout', function(req, res){
-    res.render('logout', { appTitle: 'Passport' });
+app.post('/logout', function(req, res){
+    var sess = req.session;
+    if(sess){
+        sess.destroy(function(err){
+            if(err){
+                console.log(err);
+            }else{
+                res.render('login', {
+                    appTitle: 'Passport',
+                    msg: '로그아웃 성공!!!' 
+                });
+            }
+        })
+    } else {
+        res.render('login', {
+            appTitle: 'Passport',
+            msg: '로그인된 사용자가 없습니다...' 
+        });
+    }
 });
 
 
