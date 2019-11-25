@@ -254,16 +254,12 @@ app.get('/logout', function(req, res){
                 console.log(err);
             }else{
                 res.render('login', {
-                    login: sess.login,
-                    userid: sess.userid,
                     msg: '로그아웃 성공!!!' 
                 });
             }
         })
     } else {
         res.render('login', {
-            login: sess.login,
-            userid: sess.userid,
             msg: '로그인된 사용자가 없습니다...' 
         });
     }
@@ -273,6 +269,6 @@ app.get('/logout', function(req, res){
 
 // 서버 시작
 http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port') + '.');
+    console.log('Express server listening on http://localhost:' + app.get('port'));
     connectDB();
 });
