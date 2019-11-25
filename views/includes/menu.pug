@@ -2,14 +2,13 @@
   ul.nav.nav-pills
     li(class=(menu === 'index')?'active':'')
       a(href='/') Home
-    if (mypost || menu ==='post' || menu ==='mypost')
+    if (login)
       li(class=(menu === 'mypost')?'active':'')
         a(href="/mypost") MyPost
       li(class=(menu === 'post')?'active':'')
         a(href="/post") Post
       li
-        form(id="logout", method="POST", action="/logout")
-          button(type="submit") Logout
+        a(href="/logout") Logout
     else
       li(class=(menu === 'signup')?'active':'')
         a(href='/signup') SignUp

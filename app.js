@@ -107,23 +107,48 @@ var signup = function (db, id, password, name, mail, callback) {
 
 // route 정의
 app.get('/', function(req, res){
-    res.render('index', { appTitle: 'Passport' });
+    var sess = req.session;
+    res.render('index', {
+        login: sess.login,
+        userid: sess.userid,
+        msg: '' 
+    });
 });
 
 app.get('/index', function(req, res){
-    res.render('index', { appTitle: 'Passport' });
+    var sess = req.session;
+    res.render('index', {
+        login: sess.login,
+        userid: sess.userid,
+        msg: '' 
+    });
 });
 
 app.get('/post', function(req, res){
-    res.render('post', { appTitle: 'Passport' });
+    var sess = req.session;
+    res.render('post', {
+        login: sess.login,
+        userid: sess.userid,
+        msg: '' 
+    });
 });
 
 app.get('/mypost', function(req, res){
-    res.render('mypost', { appTitle: 'Passport' });
+    var sess = req.session;
+    res.render('mypost', {
+        login: sess.login,
+        userid: sess.userid,
+        msg: '' 
+    });
 });
 
 app.get('/login', function(req, res){
-    res.render('login', { appTitle: 'Passport' });
+    var sess = req.session;
+    res.render('login', {
+        login: sess.login,
+        userid: sess.userid,
+        msg: '' 
+    });
 });
 
 app.post('/login', function (req, res) {
@@ -147,7 +172,6 @@ app.post('/login', function (req, res) {
                         sess.userid = paramID;
                         console.dir(docs);
                         res.render('post', {
-                            appTitle: 'Passport',
                             login: sess.login,
                             userid: sess.userid,
                             msg: '로그인 성공!!' 
@@ -156,7 +180,8 @@ app.post('/login', function (req, res) {
                     else {
                         console.log('Login Error!!');
                         res.render('login', {
-                            appTitle: 'Passport',
+                            login: sess.login,
+                            userid: sess.userid,
                             msg: '잘못된 아이디 또는 비밀번호입니다...' 
                         });
                     }
@@ -172,7 +197,12 @@ app.post('/login', function (req, res) {
 });
 
 app.get('/signup', function(req, res){
-    res.render('signup', { appTitle: 'Passport' });
+    var sess = req.session;
+    res.render('signup', {
+        login: sess.login,
+        userid: sess.userid,
+        msg: '' 
+    });
 });
 
 app.post('/signup', function (req, res) {
@@ -194,13 +224,15 @@ app.post('/signup', function (req, res) {
                 if (result) {
                     console.dir(result);
                     res.render('login', {
-                        appTitle: 'Passport',
+                        login: sess.login,
+                        userid: sess.userid,
                         msg: '회원가입 성공!!!' 
                     });
                 } else {
                     console.log('Signup Same Memeber Error!!');
                     res.render('signup', {
-                        appTitle: 'Passport',
+                        login: sess.login,
+                        userid: sess.userid,
                         msg: '이미 등록된 아이디입니다...' 
                     });
                 }
@@ -214,7 +246,7 @@ app.post('/signup', function (req, res) {
     }
 });
 
-app.post('/logout', function(req, res){
+app.get('/logout', function(req, res){
     var sess = req.session;
     if(sess){
         sess.destroy(function(err){
@@ -222,14 +254,16 @@ app.post('/logout', function(req, res){
                 console.log(err);
             }else{
                 res.render('login', {
-                    appTitle: 'Passport',
+                    login: sess.login,
+                    userid: sess.userid,
                     msg: '로그아웃 성공!!!' 
                 });
             }
         })
     } else {
         res.render('login', {
-            appTitle: 'Passport',
+            login: sess.login,
+            userid: sess.userid,
             msg: '로그인된 사용자가 없습니다...' 
         });
     }
