@@ -150,11 +150,17 @@ app.get('/index', function(req, res){
 
 app.get('/post', function(req, res){
     var sess = req.session;
-    res.render('post', {
+    if(sess.login != true){
+        res.render('login', {
+            msg: '로그인을 해주세요!!' 
+        });
+    } else {
+        res.render('post', {
         login: sess.login,
         userid: sess.userid,
         msg: '' 
     });
+    }
 });
 
 app.post('/post', function(req, res){
@@ -200,11 +206,17 @@ app.post('/post', function(req, res){
 
 app.get('/mypost', function(req, res){
     var sess = req.session;
-    res.render('mypost', {
-        login: sess.login,
-        userid: sess.userid,
-        msg: '' 
-    });
+    if(sess.login != true){
+        res.render('login', {
+            msg: '로그인을 해주세요!!' 
+        });
+    } else {
+        res.render('mypost', {
+            login: sess.login,
+            userid: sess.userid,
+            msg: '' 
+        });
+    }
 });
 
 app.get('/login', function(req, res){
@@ -313,20 +325,26 @@ app.post('/signup', function (req, res) {
 
 app.get('/logout', function(req, res){
     var sess = req.session;
-    if(sess){
-        sess.destroy(function(err){
-            if(err){
-                console.log(err);
-            }else{
-                res.render('login', {
-                    msg: '로그아웃 성공!!!' 
-                });
-            }
-        })
-    } else {
+    if(sess.login != true){
         res.render('login', {
-            msg: '로그인된 사용자가 없습니다...' 
+            msg: '로그인 유저가 없습니다!!' 
         });
+    } else {
+        if(sess){
+            sess.destroy(function(err){
+                if(err){
+                    console.log(err);
+                }else{
+                    res.render('login', {
+                        msg: '로그아웃 성공!!!' 
+                    });
+                }
+            })
+        } else {
+            res.render('login', {
+                msg: '로그인된 사용자가 없습니다...' 
+            });
+        }
     }
 });
 
