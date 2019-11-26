@@ -55,8 +55,8 @@ app.use(session({
 // app.use('/', router);
 
 var authUser = function (db, id, password, callback) {
-    var members = db.collection("members");
-    var result = members.find({ "id": id, "password": password });
+    var members = db.collection("member");
+    var result = members.find({ "_id": id, "password": password });
 
     result.toArray(
         function (err, docs) {
@@ -76,15 +76,14 @@ var authUser = function (db, id, password, callback) {
 };
  
 var signup = function (db, id, password, name, mail, callback) {
-    var members = db.collection('members');
-    members.findOne({ "id": id }, function(err, member){
-        console.log('same member exist?? ' + member);
+    var members = db.collection('member');
+    members.findOne({ "_id": id }, function(err, member){
         if(err) {
             callback(err, null);
             return;
         }
         if (member == null) {
-            members.insertOne({ "id": id, "password": password, "name": name, "mail": mail },
+            members.insertOne({ "_id": id, "password": password, "name": name, "mail": mail },
                 function (err, result) {
                     if (err) {
                         callback(err, null);
@@ -214,6 +213,7 @@ app.post('/signup', function (req, res) {
     if (db){
         signup(db, paramID, paramPW, paramName, paramMail,
             function (err, result)  {
+                var sess = req.session;
                 if (err) {
                     console.log('Signup Error!!');
                     res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
@@ -222,14 +222,13 @@ app.post('/signup', function (req, res) {
                     return;
                 }
                 if (result) {
-                    console.dir(result);
                     res.render('login', {
                         login: sess.login,
                         userid: sess.userid,
                         msg: '회원가입 성공!!!' 
                     });
                 } else {
-                    console.log('Signup Same Memeber Error!!');
+                    console.log('Same Memeber Error!!');
                     res.render('signup', {
                         login: sess.login,
                         userid: sess.userid,
