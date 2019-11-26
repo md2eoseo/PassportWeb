@@ -102,7 +102,32 @@ var signup = function (db, id, password, name, mail, callback) {
     });
 };
 
-
+var postCreate = function (db, title, slug, text, userid, callback) {
+    var posts = db.collection('post');
+    posts.findOne({ "_id": slug }, function(err, post){
+        if(err) {
+            callback(err, null);
+            return;
+        }
+        if (post == null) {
+            posts.insertOne({ "_id": slug, "title": title, "text": text, "userid": userid },
+                function (err, result) {
+                    if (err) {
+                        callback(err, null);
+                        return;
+                    }
+                    if (result.insertedCount > 0) {
+                        callback(null, result);
+                    } else {
+                        callback(null, null);
+                    }
+                }
+            );
+        } else {
+            callback(null, null);
+        }
+    })
+}
 
 // route 정의
 app.get('/', function(req, res){
@@ -130,6 +155,47 @@ app.get('/post', function(req, res){
         userid: sess.userid,
         msg: '' 
     });
+});
+
+app.post('/post', function(req, res){
+    var sess = req.session;
+    var title = req.body.title || req.query.title;
+    var slug = req.body.slug || req.query.slug;
+    var text = req.body.text || req.query.text;
+
+    if (db){
+        postCreate(db, title, slug, text, sess.userid,
+            function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('Post Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    res.render('mypost', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        msg: '포스트 성공!!!' 
+                    });
+                } else {
+                    console.log('Same Slug Error!!');
+                    res.render('post', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        msg: '이미 등록된 슬러그입니다.' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
 });
 
 app.get('/mypost', function(req, res){
