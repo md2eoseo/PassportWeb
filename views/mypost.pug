@@ -14,14 +14,20 @@ block content
       table.table.table-stripped
         thead
           tr
-            th(colspan="2") Actions
-            th Post Title
+            th Delete
+            th Edit
+            th Publish
+            th(colspan="5") Title
+
         tbody
           each post, index in posts
             tr(data-id=`${post._id}`, class=(!post.published)?'unpublished':'')
               td.action
                 button.btn.btn-danger.btn-sm.remove(type="button")
-                  span.glyphicon.glyphicon-remove(title="Remove")
+                  span.glyphicon.glyphicon-trash(title="Remove")
+              td.action
+                button.btn.btn-default.btn-sm.remove(type="button")
+                  span.glyphicon.glyphicon-edit(title="Update")
               td.action
                 button.btn.btn-default.btn-sm.publish(type="button")
                   span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")

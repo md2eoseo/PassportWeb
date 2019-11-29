@@ -30,25 +30,48 @@ html
       }
 
   body
+    nav.navbar.navbar-default
+      .container-fluid
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/') Passport
+          if login
+            ul.nav.navbar-nav
+              li
+                a(href='/mypost') MyPost
+              li
+                a(href='/post') Post
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse
+          ul.nav.navbar-nav.navbar-right
+            if login
+              li
+                form.navbar-form.navbar-left(action="/search", method="GET" role="search")
+                  .form-group
+                    input.form-control(type='text', placeholder='Search', style="width: 300px;")
+                  button.btn.btn-default(type='submit') Search
+              li
+                a(href='/logout') Logout
+            else
+              li
+                form.navbar-form.navbar-left(action="/login", method="POST" name="form" onsubmit="return check()")
+                  .form-group
+                    input.form-control(name="id", type='text', placeholder='ID', style="width: 200px;")
+                    input.form-control(name="password", type='password', placeholder='Password', style="width: 200px;")
+                  button.btn.btn-default(type='submit') Login
+              li
+                a(href='/signup') SignUp
     #wrap
-      .container
-        h1.page-header Passport
-        p.lead #{ msg }
-        if login
-          p.lead Welcome, #{ userid }! #{ login }
-        // p.lead Welcome to Passport by&nbsp;
-          a(href="https://www.instagram.com/2eoseo") @md2eoseo
-          |
-        br
-        block page
-        block header
-          div
-            include includes/menu
-        block alert
-          div.alert.alert-warning.hidden #{ msg }
-        br
-        .content
-          block content
+      block page
+      block header
+      block alert
+        div.alert #{ msg }
+      br
+      .content
+        block content
     br
     block footer
       footer

@@ -74,14 +74,13 @@ var authUser = function (db, id, password, callback) {
     var members = db.collection("member");
     var result = members.find({ "_id": id, "password": password });
 
-    result.toArray(
-        function (err, docs) {
+    result.toArray(function (err, docs) {
             if (err) {
                 callback(err, null);
                 return;
             }
             if (docs.length > 0) {
-                console.log('find user [ ' + docs + ' ]');
+                console.log('find user [ ' + docs.length + ' ]');
                 callback(null, docs);
             } else {
                 console.log('cannot find user!!');
@@ -131,7 +130,8 @@ var postCreate = function (db, title, slug, text, userid, callback) {
                 "title": title,
                 "text": text,
                 "userid": userid,
-                "date": { type: Date, default: new Date() }
+                "date": { type: Date, default: new Date() },
+                "modate": null
             }, function (err, result) {
                     if (err) {
                         callback(err, null);
@@ -156,7 +156,8 @@ var postList = function (db, callback) {
         if(err) {
             callback(err, null);
             return;
-        } else {
+        }
+        if(post){
             callback(null, post);
         }
     });
@@ -168,7 +169,8 @@ var postMyList = function (db, userid, callback) {
         if(err) {
             callback(err, null);
             return;
-        } else {
+        }
+        if(post){
             callback(null, post);
         }
     });
@@ -204,14 +206,6 @@ app.get('/', function(req, res){
                         userid: sess.userid,
                         posts: result,
                         msg: 'postList 성공!!!' 
-                    });
-                } else {
-                    console.log('no post...');
-                    res.render('post', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        posts: 0,
-                        msg: '작성 글이 없습니다...' 
                     });
                 }
             }
@@ -299,14 +293,6 @@ app.get('/mypost', function(req, res){
                             posts: result,
                             msg: 'postMyList 성공!!!' 
                         });
-                    } else {
-                        console.log('no post...');
-                        res.render('mypost', {
-                            login: sess.login,
-                            userid: sess.userid,
-                            posts: 0,
-                            msg: '작성 글이 없습니다...' 
-                        });
                     }
                 }
             );
@@ -345,13 +331,25 @@ app.post('/login', function (req, res) {
                         return;
                     }
                     if (docs) {
-                        sess.login = true;
-                        sess.userid = paramID;
-                        res.render('post', {
-                            login: sess.login,
-                            userid: sess.userid,
-                            msg: '로그인 성공!!' 
+                        postList(db, function(err, result){
+                            if(err) {
+                                console.log('postList Error!!');
+                                res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                                res.write('<h1>postList Error!!</h1>');
+                                res.end();
+                            }
+                            if (result) {
+                                sess.login = true;
+                                sess.userid = paramID;
+                                res.render('index', {
+                                    login: sess.login,
+                                    userid: sess.userid,
+                                    posts: result,
+                                    msg: '로그인 성공!!' 
+                                });
+                            }
                         });
+                        
                     }
                     else {
                         console.log('Login Error!!');
@@ -446,8 +444,7 @@ app.get('/:slug', function(req, res){
     var slug = req.params.slug;
 
     if (db){
-        postRead(db, slug,
-            function (err, result)  {
+        postRead(db, slug, function (err, result)  {
                 var sess = req.session;
                 if (err) {
                     console.log('postRead Error!!');
@@ -460,15 +457,15 @@ app.get('/:slug', function(req, res){
                     res.render('article', {
                         login: sess.login,
                         userid: sess.userid,
-                        title: result.title,
-                        text: result.text,
+                        post: result,
                         msg: 'postRead 성공!!!' 
                     });
                 } else {
                     console.log('No exist post Error!!');
-                    res.render('index', {
+                    res.render('article', {
                         login: sess.login,
                         userid: sess.userid,
+                        post: result,
                         msg: '글이 없습니다...' 
                     });
                 }
