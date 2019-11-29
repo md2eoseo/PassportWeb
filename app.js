@@ -152,7 +152,7 @@ var postCreate = function (db, title, slug, text, userid, callback) {
 
 var postList = function (db, callback) {
     var posts = db.collection('post');
-    posts.find({  }).toArray(function(err, post){
+    posts.find({  }).sort({ "date": -1 }).toArray(function(err, post){
         if(err) {
             callback(err, null);
             return;
@@ -164,7 +164,7 @@ var postList = function (db, callback) {
 
 var postMyList = function (db, userid, callback) {
     var posts = db.collection('post');
-    posts.find({ "userid": userid }).toArray(function(err, post){
+    posts.find({ "userid": userid }).sort({ "date": -1 }).toArray(function(err, post){
         if(err) {
             callback(err, null);
             return;
@@ -174,9 +174,9 @@ var postMyList = function (db, userid, callback) {
     });
 }
 
-var postRead = function (db, userid, slug, callback) {
+var postRead = function (db, slug, callback) {
     var posts = db.collection('post');
-    posts.findOne({ "userid": userid, "_id": slug }, function(err, post){
+    posts.findOne({ "_id": slug }, function(err, post){
         if(err) {
             callback(err, null);
             return;
@@ -441,12 +441,12 @@ app.get('/logout', function(req, res){
     }
 });
 
-app.get('/:id/:slug', function(req, res){
-    var userid = req.params.id;
+app.get('/:slug', function(req, res){
+    // var userid = req.params.id;
     var slug = req.params.slug;
 
     if (db){
-        postRead(db, userid, slug,
+        postRead(db, slug,
             function (err, result)  {
                 var sess = req.session;
                 if (err) {

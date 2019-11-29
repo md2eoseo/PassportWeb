@@ -26,5 +26,5 @@ block content
                 button.btn.btn-default.btn-sm.publish(type="button")
                   span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")
               td
-                a(href=`/${post.userid}/${post._id}`)= post.title
+                a(href=`/${post._id}`)= post.title
       script(type="text/javascript", src="js/list.js")

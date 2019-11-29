@@ -12,4 +12,6 @@ block content
     each post, index in posts
       div
         h2
-          a(href=`/${post.userid}/${post._id}`)= post.title
+          a(href=`/${post._id}`)= post.title
+          |&nbsp;-&nbsp;
+          a(href=`/${post._id}`)= post.userid
