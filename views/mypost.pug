@@ -5,27 +5,25 @@ block page
 
 block content
   div.mypost
-    //- if (articles.length === 0 )
-    if (1)
+    if (posts == 0 )
       p
         | No article. 
         a(href="/post") Add
         |.
     else
-      
       table.table.table-stripped
         thead
           tr
             th(colspan="2") Actions
             th Post Title
         tbody
-          each article, index in articles
-            tr(data-id=`${article._id}`, class=(!article.published)?'unpublished':'')
+          each post, index in posts
+            tr(data-id=`${post._id}`, class=(!post.published)?'unpublished':'')
               td.action
                 button.btn.btn-danger.btn-sm.remove(type="button")
                   span.glyphicon.glyphicon-remove(title="Remove")
               td.action
                 button.btn.btn-default.btn-sm.publish(type="button")
-                  span.glyphicon(class=(article.published)?"glyphicon-pause":"glyphicon-play", title=(article.published)?"Unpublish":"Publish")
-              td= article.title
+                  span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")
+              td= post.title
       script(type="text/javascript", src="js/list.js")

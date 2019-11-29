@@ -4,13 +4,29 @@ const http = require('http');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
+const mongoose = require('mongoose');
 // var compression = require('compression');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 
-// DB 연결
-var db;
 
+// DB 연결
+// var Post = require('./models/post');
+// var Comment = require('./models/comment');
+// var promise = mongoose.connect('mongodb://localhost:27017/test', {
+//         useNewUrlParser: true,
+//         useUnifiedTopology: true
+//     });
+//     var db = mongoose.connection;
+
+// function connectDB() {
+//     db.on('error', console.error.bind(console, 'connection error:'));
+//     db.once('open', function() {
+//         console.log('connected successfully');
+//     });
+// }
+
+var db;
 function connectDB() {
     var databaseURL = 'mongodb://localhost:27017';
     mongoClient.connect(databaseURL, {
@@ -110,7 +126,7 @@ var postCreate = function (db, title, slug, text, userid, callback) {
             return;
         }
         if (post == null) {
-            posts.insertOne({ "_id": slug, "title": title, "text": text, "userid": userid },
+            posts.insertOne({ "_id": slug, "title": title, "text": text, "userid": userid, "date": { type: Date, default: Date.now() } },
                 function (err, result) {
                     if (err) {
                         callback(err, null);
@@ -126,26 +142,108 @@ var postCreate = function (db, title, slug, text, userid, callback) {
         } else {
             callback(null, null);
         }
-    })
+    });
+}
+
+var postList = function (db, callback) {
+    var posts = db.collection('post');
+    posts.find({  }).toArray(function(err, post){
+        if(err) {
+            callback(err, null);
+            return;
+        } else {
+            callback(null, post);
+        }
+    });
+}
+
+var postMyList = function (db, userid, callback) {
+    var posts = db.collection('post');
+    posts.find({ "userid": userid }).toArray(function(err, post){
+        if(err) {
+            callback(err, null);
+            return;
+        } else {
+            callback(null, post);
+        }
+    });
 }
 
 // route 정의
 app.get('/', function(req, res){
-    var sess = req.session;
-    res.render('index', {
-        login: sess.login,
-        userid: sess.userid,
-        msg: '' 
-    });
+    if (db){
+        postList(db, function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('Home Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    console.dir(result);
+                    res.render('index', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        posts: result,
+                        msg: 'postList 성공!!!' 
+                    });
+                } else {
+                    console.log('no post...');
+                    res.render('post', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        posts: 0,
+                        msg: '작성 글이 없습니다...' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
 });
 
 app.get('/index', function(req, res){
-    var sess = req.session;
-    res.render('index', {
-        login: sess.login,
-        userid: sess.userid,
-        msg: '' 
-    });
+    if (db){
+        postList(db, function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('Home Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    console.dir(result);
+                    res.render('index', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        posts: result,
+                        msg: 'postList 성공!!!' 
+                    });
+                } else {
+                    console.log('no post...');
+                    res.render('post', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        posts: 0,
+                        msg: '작성 글이 없습니다...' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
 });
 
 app.get('/post', function(req, res){
@@ -211,11 +309,40 @@ app.get('/mypost', function(req, res){
             msg: '로그인을 해주세요!!' 
         });
     } else {
-        res.render('mypost', {
-            login: sess.login,
-            userid: sess.userid,
-            msg: '' 
-        });
+        if (db){
+            postMyList(db, sess.userid, function (err, result)  {
+                    if (err) {
+                        console.log('Home Error!!');
+                        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                        res.write('<h1>' + err + '</h1>');
+                        res.end();
+                        return;
+                    }
+                    if (result) {
+                        console.dir(result);
+                        res.render('mypost', {
+                            login: sess.login,
+                            userid: sess.userid,
+                            posts: result,
+                            msg: 'postMyList 성공!!!' 
+                        });
+                    } else {
+                        console.log('no post...');
+                        res.render('mypost', {
+                            login: sess.login,
+                            userid: sess.userid,
+                            posts: 0,
+                            msg: '작성 글이 없습니다...' 
+                        });
+                    }
+                }
+            );
+        } else {
+            console.log('DB Connect Error!!');
+            res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+            res.write('<h1>DB Connect Error!!</h1>');
+            res.end();
+        }
     }
 });
 
@@ -330,21 +457,15 @@ app.get('/logout', function(req, res){
             msg: '로그인 유저가 없습니다!!' 
         });
     } else {
-        if(sess){
-            sess.destroy(function(err){
-                if(err){
-                    console.log(err);
-                }else{
-                    res.render('login', {
-                        msg: '로그아웃 성공!!!' 
-                    });
-                }
-            })
-        } else {
-            res.render('login', {
-                msg: '로그인된 사용자가 없습니다...' 
-            });
-        }
+        sess.destroy(function(err){
+            if(err){
+                console.log(err);
+            }else{
+                res.render('login', {
+                    msg: '로그아웃 성공!!!' 
+                });
+            }
+        })
     }
 });
 

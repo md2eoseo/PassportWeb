@@ -3,14 +3,13 @@ extends layout
 block page 
   - var menu = 'index'
 block content
-  //- if (articles.length === 0)
-  if (1)
+  if (posts == 0)
     | No post right now...
     br
     a(href="/login") Login
     |  to post and publish.
   else 
-    each article, index in articles
+    each post, index in posts
       div
         h2
-          a(href=`/articles/${article.slug}`)= article.title
+          a(href=`/${post.userid}/${post._id}`)= post.title
