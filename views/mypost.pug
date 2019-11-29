@@ -7,7 +7,7 @@ block content
   div.mypost
     if (posts == 0 )
       p
-        | No article. 
+        | No post. 
         a(href="/post") Add
         |.
     else
@@ -25,5 +25,6 @@ block content
               td.action
                 button.btn.btn-default.btn-sm.publish(type="button")
                   span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")
-              td= post.title
+              td
+                a(href=`/${post.userid}/${post._id}`)= post.title
       script(type="text/javascript", src="js/list.js")

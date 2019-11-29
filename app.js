@@ -126,8 +126,13 @@ var postCreate = function (db, title, slug, text, userid, callback) {
             return;
         }
         if (post == null) {
-            posts.insertOne({ "_id": slug, "title": title, "text": text, "userid": userid, "date": { type: Date, default: Date.now() } },
-                function (err, result) {
+            posts.insertOne({
+                "_id": slug,
+                "title": title,
+                "text": text,
+                "userid": userid,
+                "date": { type: Date, default: new Date() }
+            }, function (err, result) {
                     if (err) {
                         callback(err, null);
                         return;
@@ -169,6 +174,18 @@ var postMyList = function (db, userid, callback) {
     });
 }
 
+var postRead = function (db, userid, slug, callback) {
+    var posts = db.collection('post');
+    posts.findOne({ "userid": userid, "_id": slug }, function(err, post){
+        if(err) {
+            callback(err, null);
+            return;
+        } else {
+            callback(null, post);
+        }
+    });
+}
+
 // route 정의
 app.get('/', function(req, res){
     if (db){
@@ -182,45 +199,6 @@ app.get('/', function(req, res){
                     return;
                 }
                 if (result) {
-                    console.dir(result);
-                    res.render('index', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        posts: result,
-                        msg: 'postList 성공!!!' 
-                    });
-                } else {
-                    console.log('no post...');
-                    res.render('post', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        posts: 0,
-                        msg: '작성 글이 없습니다...' 
-                    });
-                }
-            }
-        );
-    } else {
-        console.log('DB Connect Error!!');
-        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
-        res.write('<h1>DB Connect Error!!</h1>');
-        res.end();
-    }
-});
-
-app.get('/index', function(req, res){
-    if (db){
-        postList(db, function (err, result)  {
-                var sess = req.session;
-                if (err) {
-                    console.log('Home Error!!');
-                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
-                    res.write('<h1>' + err + '</h1>');
-                    res.end();
-                    return;
-                }
-                if (result) {
-                    console.dir(result);
                     res.render('index', {
                         login: sess.login,
                         userid: sess.userid,
@@ -279,11 +257,7 @@ app.post('/post', function(req, res){
                     return;
                 }
                 if (result) {
-                    res.render('mypost', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        msg: '포스트 성공!!!' 
-                    });
+                    res.redirect('/mypost');
                 } else {
                     console.log('Same Slug Error!!');
                     res.render('post', {
@@ -319,7 +293,6 @@ app.get('/mypost', function(req, res){
                         return;
                     }
                     if (result) {
-                        console.dir(result);
                         res.render('mypost', {
                             login: sess.login,
                             userid: sess.userid,
@@ -374,7 +347,6 @@ app.post('/login', function (req, res) {
                     if (docs) {
                         sess.login = true;
                         sess.userid = paramID;
-                        console.dir(docs);
                         res.render('post', {
                             login: sess.login,
                             userid: sess.userid,
@@ -469,7 +441,46 @@ app.get('/logout', function(req, res){
     }
 });
 
+app.get('/:id/:slug', function(req, res){
+    var userid = req.params.id;
+    var slug = req.params.slug;
 
+    if (db){
+        postRead(db, userid, slug,
+            function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('postRead Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    res.render('article', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        title: result.title,
+                        text: result.text,
+                        msg: 'postRead 성공!!!' 
+                    });
+                } else {
+                    console.log('No exist post Error!!');
+                    res.render('index', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        msg: '글이 없습니다...' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
+});
 
 // 서버 시작
 http.createServer(app).listen(app.get('port'), function(){
