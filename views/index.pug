@@ -10,15 +10,12 @@ block content
     a(href="/login") Login
     |  to post and publish.
   else 
-    each post, index in posts
-      - var postdate = post.date.default.toString().substring(0, 24);
-      div.well.well-lg
-        table
-          tr
-            td
-              h2
-                a(href=`/${post._id}`)= post.title
-                |&nbsp;-&nbsp;
-                a(href=`/${post._id}`)= post.userid
-            td
-              span()= postdate
+    .wrapper
+      each post, index in posts
+        - var postdate = post.date.default.toString().substring(0, 24);
+        div.well.well-sm(style="float: left; width: 300px; height: 400px; box-sizing: border-box; margin: 10px;")
+          h2(style="margin: 0px 0px 40px 20px; height: 50px")
+            a(href=`/${post._id}`)= post.title
+          p(style="width: 270px; height: 260px; box-sizing: border-box; margin: 10px; overflow: hidden; text-overflow: ellipsis; word-break: break-all;")= post.text
+          span= post.userid
+          span(style="float: right;")= postdate

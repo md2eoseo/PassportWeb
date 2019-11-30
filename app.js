@@ -89,7 +89,7 @@ var authUser = function (db, id, password, callback) {
         }
     );
 };
- 
+
 var signup = function (db, id, password, name, mail, callback) {
     var members = db.collection('member');
     members.findOne({ "_id": id }, function(err, member){

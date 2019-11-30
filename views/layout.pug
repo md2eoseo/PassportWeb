@@ -28,6 +28,25 @@ html
           return false;
         } else return true;
       }
+    script.
+      $( document ).ready( function() {
+        var jbOffset = $( '.navbar' ).offset();
+        $( window ).scroll( function() {
+          if ( $( document ).scrollTop() > jbOffset.top ) {
+            $( '.navbar' ).addClass( 'jbFixed' );
+          }
+          else {
+            $( '.navbar' ).removeClass( 'jbFixed' );
+          }
+        });
+      });
+    style.
+      .jbFixed {
+        position: fixed;
+        top: 0px;
+        box-sizing: border-box;
+      }
+
 
   body
     nav.navbar.navbar-default
@@ -39,19 +58,19 @@ html
             span.icon-bar
             span.icon-bar
           a.navbar-brand(href='/') Passport
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse
           if login
             ul.nav.navbar-nav
               li
                 a(href='/mypost') MyPost
               li
                 a(href='/post') Post
-        #bs-example-navbar-collapse-1.collapse.navbar-collapse
           ul.nav.navbar-nav.navbar-right
             if login
               li
                 form.navbar-form.navbar-left(action="/search", method="GET" role="search")
-                  .form-group
-                    input.form-control(type='text', placeholder='Search', style="width: 300px;")
+                  .form-group(style="float:left;")
+                    input.form-control(type='text', name='search', placeholder='Search', style="width: 300px;")
                   button.btn.btn-default(type='submit') Search
               li
                 a(href='/logout') Logout
@@ -75,6 +94,7 @@ html
     br
     block footer
       footer
+        hr(style="clear:both;")
         .container
           p
             | Copyright &copy;2019
