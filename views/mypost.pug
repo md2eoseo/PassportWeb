@@ -27,9 +27,21 @@ block content
                 a(href=`/${post._id}`)= post.title
               td
               td.action
-                button.btn.btn-default.publish(type="button", aria-label='Publish')
-                  span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")
-                button.btn.btn-default(type='button', aria-label='Edit')
-                  span.glyphicon.glyphicon-edit(title="Edit", aria-hidden='true')
-                button.btn.btn-danger.remove(type="button", aria-label='Delete')
-                  span.glyphicon.glyphicon-trash(title="Delete", aria-hidden='true')
+                span
+                  .btn-group
+                    button.btn.btn-default.btn_lg.publish(type="button", aria-label='Publish')
+                      span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")
+                    button.btn.btn-default.btn_lg(type='button', aria-label='Edit', onclick="post_edit(\"" + post._id + "\");")
+                      span.glyphicon.glyphicon-edit(title="Edit", aria-hidden='true')
+                    form(action="/"+post._id + "?_method=DELETE", method="POST", role="btn_delete", style="float: left;")
+                      button.btn.btn-danger.btn_lg.remove(type="submit", aria-label='Delete', onclick="if(!confirm(\"포스트를 삭제하시겠습니까?\")){return false;}")
+                        span.glyphicon.glyphicon-trash(title="Delete", aria-hidden='true')
+
+block footer
+  script.
+    function post_edit(slug) { 
+      if(confirm("포스트를 수정하시겠습니까?")){
+        location.href = "/edit/" + slug;
+      }
+    }
+    

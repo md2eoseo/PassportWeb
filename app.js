@@ -292,6 +292,9 @@ app.post('/post', function(req, res){
                     res.render('post', {
                         login: sess.login,
                         userid: sess.userid,
+                        title: title,
+                        slug: slug,
+                        text: text,
                         msg: '이미 등록된 슬러그입니다.' 
                     });
                 }
