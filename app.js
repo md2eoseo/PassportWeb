@@ -439,6 +439,45 @@ app.get('/logout', function(req, res){
     }
 });
 
+app.get('/edit/:slug', function(req, res){
+    var slug = req.params.slug;
+
+    if (db){
+        postRead(db, slug, function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('postRead Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    res.render('edit', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        post: result,
+                        msg: 'postRead 성공!!!' 
+                    });
+                } else {
+                    console.log('No exist post Error!!');
+                    res.render('edit', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        post: result,
+                        msg: '글이 없습니다...' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
+});
+
 app.get('/:slug', function(req, res){
     // var userid = req.params.id;
     var slug = req.params.slug;
@@ -454,7 +493,7 @@ app.get('/:slug', function(req, res){
                     return;
                 }
                 if (result) {
-                    res.render('article', {
+                    res.render( 'article',{
                         login: sess.login,
                         userid: sess.userid,
                         post: result,

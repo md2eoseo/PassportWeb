@@ -1,0 +1,25 @@
+extends layout
+
+block header
+  title
+    | Passport |&nbsp;글 수정
+
+block page 
+  - var menu = 'index';
+
+block content
+  .content(style="margin-left:40px; margin-right:40px;")
+    form
+      span(style="width:700px;")
+        h1
+          = post.title
+      span(style="float: right;")
+        - var postdate = post.date.default.toString().substring(0, 24);
+        span 작성자 :&nbsp;
+          = post.userid
+          | &nbsp;&nbsp;
+        span &nbsp;작성날짜 :&nbsp;
+          = postdate
+      hr(style="clear:both;")
+      p
+        = post.text

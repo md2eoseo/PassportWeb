@@ -1,12 +1,47 @@
 extends layout
 
+block header
+  title
+    | Passport |&nbsp;
+    = post.title
+
 block page 
-  - var menu = 'index'
+  - var menu = 'index';
 
 block content
-  p
-    h1
-      = post.title
-    hr
+  .content(style="margin-left:40px; margin-right:40px;")
+    span(style="width:700px;")
+      h1
+        = post.title
+    if(login && userid == post.userid)
+      span
+        .btn-group
+          button.btn.btn-default.btn_lg.publish(type="button", aria-label='Publish')
+            span.glyphicon(class=(post.published)?"glyphicon-pause":"glyphicon-play", title=(post.published)?"Unpublish":"Publish")
+          button.btn.btn-default.btn_lg#btn_edit(type='button', aria-label='Edit', onclick="post_edit(\"" + post._id + "\");")
+            span.glyphicon.glyphicon-edit(title="Edit", aria-hidden='true')
+          button.btn.btn-danger.btn_lg.remove(type="button", aria-label='Delete', onclick="post_delete(\"" + post._id + "\");")
+            span.glyphicon.glyphicon-trash(title="Delete", aria-hidden='true')
+    span(style="float: right;")
+      - var postdate = post.date.default.toString().substring(0, 24);
+      span 작성자 :&nbsp;
+        = post.userid
+        | &nbsp;&nbsp;
+      span &nbsp;작성날짜 :&nbsp;
+        = postdate
+    hr(style="clear:both;")
     p
       = post.text
+
+block footer
+  script.
+    function post_delete(slug) { 
+      if(confirm("포스트를 삭제하시겠습니까?")){
+        location.href = "/delete/" + slug;
+      }
+    }
+    function post_edit(slug) { 
+      if(confirm("포스트를 수정하시겠습니까?")){
+        location.href = "/edit/" + slug;
+      }
+    }

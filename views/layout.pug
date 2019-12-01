@@ -1,6 +1,7 @@
 doctype html
 html
   head
+    block header
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title= appTitle
     script(type="text/javascript", src="js/jquery-3.4.1.min.js")
@@ -33,21 +34,19 @@ html
         var jbOffset = $( '.navbar' ).offset();
         $( window ).scroll( function() {
           if ( $( document ).scrollTop() > jbOffset.top ) {
-            $( '.navbar' ).addClass( 'jbFixed' );
+            $( '.navbar' ).addClass( 'fix' );
           }
           else {
-            $( '.navbar' ).removeClass( 'jbFixed' );
+            $( '.navbar' ).removeClass( 'fix' );
           }
         });
       });
     style.
-      .jbFixed {
+      .fix {
         position: fixed;
         top: 0px;
         width: 100%;
       }
-
-
   body
     nav.navbar.navbar-default
       .container-fluid
@@ -85,7 +84,6 @@ html
                 a(href='/signup') SignUp
     #wrap
       block page
-      block header
       block alert
         div.alert #{ msg }
       br
