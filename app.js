@@ -165,6 +165,20 @@ var postList = function (db, callback) {
     });
 }
 
+var postSearchList = function (db, search, callback) {
+    var posts = db.collection('post');
+    posts.find({ "title": { $regex: search } }).sort({ "date": -1 }).toArray(function(err, post){
+        if(err) {
+            callback(err, null);
+            return;
+        }
+        if(post){
+            callback(null, post);
+        }
+    });
+}
+
+
 var postMyList = function (db, userid, callback) {
     var posts = db.collection('post');
     posts.find({ "userid": userid }).sort({ "date": -1 }).toArray(function(err, post){
@@ -474,6 +488,45 @@ app.get('/logout', function(req, res){
                 });
             }
         })
+    }
+});
+
+app.get('/search', function(req, res){
+    var search = req.query.search;
+
+    if (db){
+        postSearchList(db, search, function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('search Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    res.render('search', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        posts: result,
+                        msg: '\'' + search + '\'로 검색된 결과' 
+                    });
+                } else {
+                    console.log('search Error!!');
+                    res.render('search', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        posts: result,
+                        msg: '검색된 글이 없습니다...' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
     }
 });
 
