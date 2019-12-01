@@ -254,7 +254,7 @@ app.get('/', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         posts: result,
-                        msg: 'postList 성공!!!' 
+                        msg: '' 
                     });
                 }
             }
@@ -343,7 +343,7 @@ app.get('/mypost', function(req, res){
                             login: sess.login,
                             userid: sess.userid,
                             posts: result,
-                            msg: 'postMyList 성공!!!' 
+                            msg: '' 
                         });
                     }
                 }
@@ -397,7 +397,7 @@ app.post('/login', function (req, res) {
                                     login: sess.login,
                                     userid: sess.userid,
                                     posts: result,
-                                    msg: '로그인 성공!!' 
+                                    msg: '' 
                                 });
                             }
                         });
@@ -452,7 +452,7 @@ app.post('/signup', function (req, res) {
                     res.render('login', {
                         login: sess.login,
                         userid: sess.userid,
-                        msg: '회원가입 성공!!!' 
+                        msg: '회원가입이 완료되었습니다. 글을 작성하시려면 로그인을 해주세요.' 
                     });
                 } else {
                     console.log('Same Memeber Error!!');
@@ -484,7 +484,7 @@ app.get('/logout', function(req, res){
                 console.log(err);
             }else{
                 res.render('login', {
-                    msg: '로그아웃 성공!!!' 
+                    msg: '로그아웃이 되었습니다.' 
                 });
             }
         })
@@ -550,7 +550,7 @@ app.post('/edit', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: 'postEdit 성공!!!' 
+                        msg: '글이 수정되었습니다.' 
                     });
                 } else {
                     console.log('postEdit Error!!');
@@ -558,7 +558,7 @@ app.post('/edit', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: '수정되지 않았습니다...' 
+                        msg: '글이 수정되지 않았습니다.' 
                     });
                 }
             }
@@ -589,7 +589,7 @@ app.get('/edit/:slug', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: 'postRead 성공!!!' 
+                        msg: '' 
                     });
                 } else {
                     console.log('No exist post Error!!');
@@ -628,7 +628,7 @@ app.get('/:slug', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: 'postRead 성공!!!' 
+                        msg: '' 
                     });
                 } else {
                     console.log('No exist post Error!!');

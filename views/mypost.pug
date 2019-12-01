@@ -11,15 +11,14 @@ block content
   div.mypost
     if (posts == 0 )
       p
-        | No post. 
-        a(href="/post") Add
-        |.
+        | 글이 없습니다.
+        a(href="/post") 글을 작성해주세요.
     else
       table.table.table-stripped
         thead
           tr
-            th(colspan="2") Title
-            th Actions
+            th(colspan="2") 제목
+            th 글처리
         tbody
           each post, index in posts
             tr(data-id=`${post._id}`, class=(!post.published)?'unpublished':'')

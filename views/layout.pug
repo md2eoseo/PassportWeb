@@ -72,6 +72,23 @@ html
                     input.form-control(type='text', name='search', placeholder='Search', style="width: 300px;")
                   button.btn.btn-default(type='submit') Search
               li
+                .dropdown
+                  button.btn.btn-info.dropdown-toggle(type='button', data-toggle='dropdown', aria-expanded='true')
+                    | Welcome,&nbsp;
+                    = userid
+                    |!
+                    span.caret
+                  ul.dropdown-menu(role='menu', aria-labelledby='dropdownMenu1')
+                    li(role='presentation')
+                      a(role='menuitem', tabindex='-1', href='/mypost') MyPost
+                    li(role='presentation')
+                      a(role='menuitem', tabindex='-1', href='/post') Post
+                    li(role='presentation')
+                      a(role='menuitem', tabindex='-1', href='#') Info
+                    li(role='presentation')
+                      a(role='menuitem', tabindex='-1', href='#') Setting
+
+              li
                 a(href='/logout') Logout
             else
               li
@@ -82,10 +99,11 @@ html
                   button.btn.btn-default(type='submit') Login
               li
                 a(href='/signup') SignUp
-    #wrap
+    #wrap(style="padding-left:20px;")
       block page
       block alert
-        div.alert #{ msg }
+        if(msg!='')
+          div.alert.alert-info #{ msg }
       br
       .content
         block content
