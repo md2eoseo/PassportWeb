@@ -16,7 +16,7 @@ block content
           input#title.form-control(name="title", type="text", placeholder="Title", value=post.title)
         div.form-group
           label(for="slug") Slug :&nbsp;
-          input#slug.form-control(name="slug", type="hidden", placeholder="URL", value=post._id)
+          input#slug.form-control(name="slug", type="hidden", value=post._id)
           span.help-block You cannot change slug.
         div.form-group
           label(for="text") Text

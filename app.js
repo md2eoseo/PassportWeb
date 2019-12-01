@@ -5,9 +5,10 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
 // const mongoose = require('mongoose');
-// var compression = require('compression');
+// const compression = require('compression');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const methodOverride = require('method-override');
 
 
 // DB 연결
@@ -65,6 +66,7 @@ app.use(session({
     saveUninitialized: true,
     store: new FileStore()
    }));
+app.use(methodOverride('_method'));
 
 // 라우터 모듈 사용
 // var router = express.Router();
@@ -207,6 +209,17 @@ var postEdit = function (db, title, slug, text, callback){
         }
         if(result)
             callback(null, result);
+    });
+}
+
+var postDelete = function(db, slug, callback){
+    var posts = db.collection('post');
+    posts.deleteOne({ "_id": slug }, function(err, result){
+        if(err) {
+            callback(err, null);
+            return;
+        }
+        callback(null, result);
     });
 }
 
@@ -542,7 +555,6 @@ app.get('/edit/:slug', function(req, res){
 });
 
 app.get('/:slug', function(req, res){
-    // var userid = req.params.id;
     var slug = req.params.slug;
 
     if (db){
@@ -575,6 +587,39 @@ app.get('/:slug', function(req, res){
         );
     } else {
         console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
+});
+
+app.delete('/:slug', function(req, res){
+    var slug = req.params.slug;
+
+    if (db){
+        postDelete(db, slug, function (err, result)  {
+                var sess = req.session;
+                if (err) {
+                    console.log('postDelete Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    res.redirect('/mypost');
+                } else {
+                    console.log('postDelete Error!!');
+                    res.render('article', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        post: result,
+                        msg: '삭제 실패!!!' 
+                    });
+                }
+            }
+        );
+    } else {
         res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
         res.write('<h1>DB Connect Error!!</h1>');
         res.end();
