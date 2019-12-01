@@ -4,7 +4,7 @@ const http = require('http');
 const path = require('path');
 const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 // var compression = require('compression');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
@@ -185,6 +185,28 @@ var postRead = function (db, slug, callback) {
         } else {
             callback(null, post);
         }
+    });
+}
+
+var postEdit = function (db, title, slug, text, callback){
+    var posts = db.collection('post');
+    posts.updateOne({ "_id": slug }, { $set: {
+        "title": title,
+        "text": text,
+        "modate": { type: Date, default: new Date() }
+    }}, { upsert: true }, function(err, result){
+        if(err) {
+            callback(err, null);
+            return;
+        }
+    });
+    posts.findOne({ "_id": slug }, function(err, result){
+        if(err) {
+            callback(err, null);
+            return;
+        }
+        if(result)
+            callback(null, result);
     });
 }
 
@@ -439,6 +461,47 @@ app.get('/logout', function(req, res){
     }
 });
 
+app.post('/edit', function(req, res){
+    var sess = req.session;
+    var title = req.body.title || req.query.title;
+    var slug = req.body.slug || req.query.slug;
+    var text = req.body.text || req.query.text;
+
+    if (db){
+        postEdit(db, title, slug, text, function (err, result)  {
+                if (err) {
+                    console.log('postEdit Error!!');
+                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                    res.write('<h1>' + err + '</h1>');
+                    res.end();
+                    return;
+                }
+                if (result) {
+                    res.render('article', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        post: result,
+                        msg: 'postEdit 성공!!!' 
+                    });
+                } else {
+                    console.log('postEdit Error!!');
+                    res.render('article', {
+                        login: sess.login,
+                        userid: sess.userid,
+                        post: result,
+                        msg: '수정되지 않았습니다...' 
+                    });
+                }
+            }
+        );
+    } else {
+        console.log('DB Connect Error!!');
+        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+        res.write('<h1>DB Connect Error!!</h1>');
+        res.end();
+    }
+});
+
 app.get('/edit/:slug', function(req, res){
     var slug = req.params.slug;
 
@@ -493,7 +556,7 @@ app.get('/:slug', function(req, res){
                     return;
                 }
                 if (result) {
-                    res.render( 'article',{
+                    res.render('article', {
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
