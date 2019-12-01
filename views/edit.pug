@@ -9,6 +9,7 @@ block page
 
 block content
   .content(style="margin-left:40px; margin-right:40px;")
+    h2 글 수정
     div.col-md-8
       form(action="/edit", method="POST", role="form")
         div.form-group
@@ -21,4 +22,4 @@ block content
           textarea#text.form-control(rows="5", name="text", placeholder="Text")
             = post.text
         p
-          button.btn.btn-primary(type="submit") Edit
+          button.btn.btn-primary(type="submit") 수정
