@@ -37,7 +37,8 @@ block content
         span(style="float: right;") &nbsp;수정일자 :&nbsp;
           = modate
     hr(style="clear:both;")
-    img(src=post.file.filename, alt=post.file.filename, width="250", style="float: left;margin-right:20px;")
+    if(post.file != null)
+      img(src=post.file.filename, alt=post.file.filename, width="250", style="float: left;margin-right:20px;")
     p(style="")
       = post.text
 

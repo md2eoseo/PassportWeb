@@ -3,11 +3,6 @@ extends layout
 block header
   title
     | Passport |&nbsp;글 수정
-  script.
-    if(sessionScope.userid != post._id){
-      alert('접근 불가!');
-      location.href = '/';
-    }
 
 block page 
   - var menu = 'index';
@@ -16,7 +11,7 @@ block content
   .content(style="margin-left:40px; margin-right:40px;")
     h2 글 수정
     div.col-md-8
-      form(action="/edit", method="POST", role="form")
+      form(action="/edit", method="POST", role="form", enctype="multipart/form-data")
         div.form-group
           label(for="title") Title
           input#title.form-control(name="title", type="text", placeholder="Title", value=post.title)
@@ -26,5 +21,14 @@ block content
           label(for="text") Text
           textarea#text.form-control(rows="5", name="text", placeholder="Text")
             = post.text
+        if(post.file != null)
+          div.form-group
+            label(for="file") File
+            input#file(name="file", type="file", accept="image/jpeg, image/jpg, image/png")
+            span.help-block 파일을 업로드 하지 않으면 기존 파일이 삭제됩니다.
+        else
+          div.form-group
+            label(for="file") File
+            input#file(name="file", type="file", accept="image/jpeg, image/jpg, image/png")
         p
           button.btn.btn-primary(type="submit") 수정

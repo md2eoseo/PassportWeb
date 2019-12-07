@@ -2,6 +2,7 @@
 const express = require('express');
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
 const bodyParser = require('body-parser');
 const mongoClient = require('mongodb').MongoClient;
 // const mongoose = require('mongoose');
@@ -252,11 +253,12 @@ var postRead = function (db, slug, callback) {
     });
 }
 
-var postEdit = function (db, title, slug, text, callback){
+var postEdit = function (db, title, slug, text, file, callback){
     var posts = db.collection('post');
     posts.updateOne({ "_id": slug }, { $set: {
         "title": title,
         "text": text,
+        "file": file,
         "modate": { type: Date, default: new Date() }
     }}, { upsert: true }, function(err, result){
         if(err) {
@@ -276,6 +278,17 @@ var postEdit = function (db, title, slug, text, callback){
 
 var postDelete = function(db, slug, callback){
     var posts = db.collection('post');
+
+    // 첨부 이미지 upload 폴더에서 삭제
+    posts.findOne({ "_id": slug }, function(err, result){
+        if(err) {
+            callback(err, null);
+            return;
+        }
+        if(result)
+            fs.unlink('upload/' + result.file.filename, (err) => { if (err) { console.error(err) } } )
+    });
+
     posts.deleteOne({ "_id": slug }, function(err, result){
         if(err) {
             callback(err, null);
@@ -594,14 +607,15 @@ app.get('/search', function(req, res){
     }
 });
 
-app.post('/edit', function(req, res){
+app.post('/edit', upload.single('file'), function(req, res){
     var sess = req.session;
     var title = req.body.title || req.query.title;
     var slug = req.body.slug || req.query.slug;
     var text = req.body.text || req.query.text;
+    var file = req.file;
 
     if (db){
-        postEdit(db, title, slug, text, function (err, result)  {
+        postEdit(db, title, slug, text, file, function (err, result)  {
                 if (err) {
                     console.log('postEdit Error!!');
                     res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
@@ -610,12 +624,7 @@ app.post('/edit', function(req, res){
                     return;
                 }
                 if (result) {
-                    res.render('article', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        post: result,
-                        msg: '글이 수정되었습니다.' 
-                    });
+                    res.redirect('/'+slug);
                 } else {
                     console.log('postEdit Error!!');
                     res.render('article', {
