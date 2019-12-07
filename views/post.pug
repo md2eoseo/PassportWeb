@@ -11,7 +11,7 @@ block content
     h2 글쓰기
     div= error
     div.col-md-8
-      form(action="/post", method="POST", role="form")
+      form(action="/post", method="POST", role="form", enctype="multipart/form-data")
         div.form-group
           label(for="title") Title
           input#title.form-control(name="title", type="text", placeholder="Title", value=title)
@@ -22,5 +22,8 @@ block content
         div.form-group
           label(for="text") Text
           textarea#text.form-control(rows="5", name="text", placeholder="Text")= text
+        div.form-group
+          label(for="file") File
+          input#file(name="file", type="file", value=file)
         p
           button.btn.btn-primary(type="submit") 저장

@@ -9,6 +9,16 @@ const mongoClient = require('mongodb').MongoClient;
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const methodOverride = require('method-override');
+var multer = require('multer');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'upload/')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  });
+var upload = multer({ storage: storage });
 
 
 // DB 연결
@@ -29,8 +39,8 @@ const methodOverride = require('method-override');
 
 var db;
 function connectDB() {
-    // var databaseURL = 'mongodb://localhost:27017';
-    mongoClient.connect(process.env.MONGODB_URI, {
+    var databaseURL = 'mongodb://localhost:27017';
+    mongoClient.connect(databaseURL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }, function (err, cluster){
@@ -38,8 +48,9 @@ function connectDB() {
                 console.log('Database Connect Error!!');
                 return;
             }
-            console.log('DB Connected to ' + process.env.MONGODB_URI);
-            db = cluster.db('heroku_kkdgbql2'); 
+            console.log('DB Connected to ' + databaseURL);
+            db = cluster.db('test');
+            // db = cluster.db('heroku_kkdgbql2'); 
         }
     );
 }
@@ -119,7 +130,7 @@ var signup = function (db, id, password, name, mail, callback) {
     });
 };
 
-var postCreate = function (db, title, slug, text, userid, callback) {
+var postCreate = function (db, title, slug, text, file, userid, callback) {
     var posts = db.collection('post');
     posts.findOne({ "_id": slug }, function(err, post){
         if(err) {
@@ -131,6 +142,7 @@ var postCreate = function (db, title, slug, text, userid, callback) {
                 "_id": slug,
                 "title": title,
                 "text": text,
+                "file": file,
                 "userid": userid,
                 "date": { type: Date, default: new Date() },
                 "modate": null
@@ -317,14 +329,15 @@ app.get('/post', function(req, res){
     }
 });
 
-app.post('/post', function(req, res){
+app.post('/post', upload.single('file'), function(req, res){
     var sess = req.session;
     var title = req.body.title || req.query.title;
     var slug = req.body.slug || req.query.slug;
     var text = req.body.text || req.query.text;
+    var file = req.file;
 
     if (db){
-        postCreate(db, title, slug, text, sess.userid,
+        postCreate(db, title, slug, text, file, sess.userid,
             function (err, result)  {
                 var sess = req.session;
                 if (err) {
@@ -344,6 +357,7 @@ app.post('/post', function(req, res){
                         title: title,
                         slug: slug,
                         text: text,
+                        file: file,
                         msg: '이미 등록된 슬러그입니다.' 
                     });
                 }
