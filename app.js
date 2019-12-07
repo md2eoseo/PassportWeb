@@ -39,7 +39,7 @@ function connectDB() {
                 return;
             }
             console.log('DB Connected to ' + process.env.MONGODB_URI);
-            db = cluster.db('test'); 
+            // db = cluster.db('test'); 
         }
     );
 }
