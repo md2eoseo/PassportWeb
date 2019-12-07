@@ -78,6 +78,7 @@ app.use(session({
     store: new FileStore()
    }));
 app.use(methodOverride('_method'));
+app.use('/:slug', express.static('upload'));
 
 // 라우터 모듈 사용
 // var router = express.Router();

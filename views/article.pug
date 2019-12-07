@@ -32,11 +32,13 @@ block content
       span &nbsp;작성일자 :&nbsp;
         = postdate
       if(post.modate)
+        br
         - var modate = post.modate.default.toString().substring(0, 24);
-        span &nbsp;수정일자 :&nbsp;
+        span(style="float: right;") &nbsp;수정일자 :&nbsp;
           = modate
     hr(style="clear:both;")
-    p
+    img(src=post.file.filename, alt=post.file.filename, width="250", style="float: left;margin-right:20px;")
+    p(style="")
       = post.text
 
 block footer
