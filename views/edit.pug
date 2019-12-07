@@ -3,6 +3,11 @@ extends layout
 block header
   title
     | Passport |&nbsp;글 수정
+  script.
+    if(sessionScope.userid != post._id){
+      alert('접근 불가!');
+      location.href = '/';
+    }
 
 block page 
   - var menu = 'index';

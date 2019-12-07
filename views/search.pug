@@ -2,13 +2,28 @@ extends layout
 
 block header
   title
-    | Passport |&nbsp;
-    search
+    | Passport | '#{q}' 검색 결과
+    
 
 block page 
   - var menu = 'index'
 
 block content
+  form(action="/search", method="GET", role="type_title", style="float: left;")
+    input(type="hidden", name="q", value=q)
+    input(type="hidden", name="type", value="title")
+    button.btn.btn-default.btn_lg(type="submit", aria-label='type_title') 제목
+  form(action="/search", method="GET", role="type_text", style="float: left;")
+    input(type="hidden", name="q", value=q)
+    input(type="hidden", name="type", value="text")
+    button.btn.btn-default.btn_lg(type="submit", aria-label='type_text') 내용
+  form(action="/search", method="GET", role="type_user", style="float: left;")
+    input(type="hidden", name="q", value=q)
+    input(type="hidden", name="type", value="user")
+    button.btn.btn-default.btn_lg(type="submit", aria-label='type_user') 글쓴이
+
+  div(style="clear: both;")
+  br
   if (posts == 0)
     | 검색된 결과가 없습니다...
     br

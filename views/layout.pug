@@ -10,26 +10,6 @@ html
     link(rel="stylesheet", href="/css/bootstrap-3.0.2/css/bootstrap-theme.min.css")
     link(rel="icon" type="image/x-icon" href="/assets/icon/favicon.ico")
     script.
-      function check() {
-        if(form.id.value == "") {
-          alert("ID를 입력해 주세요.");
-          form.id.focus();
-          return false;
-        } else if(form.password.value == "") {
-          alert("비밀번호를 입력해 주세요.");
-          form.password.focus();
-          return false;
-        } else if(form.name.value == "") {
-          alert("name을 입력해 주세요.");
-          form.name.focus();
-          return false;
-        } else if(form.mail.value == "") {
-          alert("메일을 입력해 주세요.");
-          form.mail.focus();
-          return false;
-        } else return true;
-      }
-    script.
       $( document ).ready( function() {
         var jbOffset = $( '.navbar' ).offset();
         $( window ).scroll( function() {
@@ -68,8 +48,8 @@ html
             if login
               li
                 form.navbar-form.navbar-left(action="/search", method="GET" role="search")
-                  .form-group(style="float:left;")
-                    input.form-control(type='text', name='search', placeholder='Search', style="width: 300px;")
+                  .form-group
+                    input.form-control(type='text', name='q', placeholder='Search', value=q, style="width: 300px;")
                   button.btn.btn-default(type='submit') Search
               li
                 .dropdown
@@ -79,10 +59,6 @@ html
                     |!
                     span.caret
                   ul.dropdown-menu(role='menu', aria-labelledby='dropdownMenu1')
-                    li(role='presentation')
-                      a(role='menuitem', tabindex='-1', href='/mypost') MyPost
-                    li(role='presentation')
-                      a(role='menuitem', tabindex='-1', href='/post') Post
                     li(role='presentation')
                       a(role='menuitem', tabindex='-1', href='#') Info
                     li(role='presentation')

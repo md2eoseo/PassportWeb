@@ -165,17 +165,52 @@ var postList = function (db, callback) {
     });
 }
 
-var postSearchList = function (db, search, callback) {
+var postSearchList = function (db, q, type, callback) {
     var posts = db.collection('post');
-    posts.find({ "title": { $regex: search } }).sort({ "date": -1 }).toArray(function(err, post){
-        if(err) {
-            callback(err, null);
-            return;
-        }
-        if(post){
-            callback(null, post);
-        }
-    });
+    if (type == "title"){
+        posts.find({ "title": { $regex: q } }).sort({ "date": -1 }).toArray(function(err, post){
+            if(err) {
+                callback(err, null);
+                return;
+            }
+            if(post){
+                callback(null, post);
+            }
+        });
+    }
+    else if (type == "text"){
+        posts.find({ "text": { $regex: q } }).sort({ "date": -1 }).toArray(function(err, post){
+            if(err) {
+                callback(err, null);
+                return;
+            }
+            if(post){
+                callback(null, post);
+            }
+        });
+    }
+    else if (type == "user"){
+        posts.find({ "userid": { $regex: q } }).sort({ "date": -1 }).toArray(function(err, post){
+            if(err) {
+                callback(err, null);
+                return;
+            }
+            if(post){
+                callback(null, post);
+            }
+        });
+    }
+    else {
+        posts.find({ "title": { $regex: q } }).sort({ "date": -1 }).toArray(function(err, post){
+            if(err) {
+                callback(err, null);
+                return;
+            }
+            if(post){
+                callback(null, post);
+            }
+        });
+    }
 }
 
 
@@ -437,6 +472,18 @@ app.post('/signup', function (req, res) {
     var paramName = req.body.name || req.query.name;
     var paramMail = req.body.mail || req.query.mail;
 
+    // if(paramID==undefined || paramPW==undefined || paramName==undefined || paramMail==undefined || paramID.trim()=='' || paramPW.trim()=='' || paramName.trim()=='' || paramMail.trim()==''){
+    //     var sess = req.session;
+    //     res.render('signup', {
+    //         login: sess.login,
+    //         userid: sess.userid,
+    //         msg: '유효하지 않습니다...' 
+    //     });
+    // }
+
+    // console.log(paramID + ' ' + paramPW + ' ' + paramName + ' ' + paramMail)
+
+
     if (db){
         signup(db, paramID, paramPW, paramName, paramMail,
             function (err, result)  {
@@ -492,10 +539,11 @@ app.get('/logout', function(req, res){
 });
 
 app.get('/search', function(req, res){
-    var search = req.query.search;
+    var q = req.query.q;
+    var type = req.query.type;
 
     if (db){
-        postSearchList(db, search, function (err, result)  {
+        postSearchList(db, q, type, function (err, result)  {
                 var sess = req.session;
                 if (err) {
                     console.log('search Error!!');
@@ -509,7 +557,8 @@ app.get('/search', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         posts: result,
-                        msg: '\'' + search + '\'로 검색된 결과' 
+                        q: q,
+                        msg: '\'' + q + '\'로 검색한 결과' 
                     });
                 } else {
                     console.log('search Error!!');
@@ -517,7 +566,7 @@ app.get('/search', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         posts: result,
-                        msg: '검색된 글이 없습니다...' 
+                        msg: '글이 검색되지 않습니다...' 
                     });
                 }
             }
@@ -577,6 +626,13 @@ app.get('/edit/:slug', function(req, res){
     if (db){
         postRead(db, slug, function (err, result)  {
                 var sess = req.session;
+
+                if(sess.login != true || sess.userid != result.userid){
+                    res.render('index', {
+                        msg: '접근 불가!!' 
+                    });
+                }
+
                 if (err) {
                     console.log('postRead Error!!');
                     res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
@@ -592,7 +648,7 @@ app.get('/edit/:slug', function(req, res){
                         msg: '' 
                     });
                 } else {
-                    console.log('No exist post Error!!');
+                    console.log('No post Error!!');
                     res.render('edit', {
                         login: sess.login,
                         userid: sess.userid,
@@ -631,7 +687,7 @@ app.get('/:slug', function(req, res){
                         msg: '' 
                     });
                 } else {
-                    console.log('No exist post Error!!');
+                    console.log('No post Error!!');
                     res.render('article', {
                         login: sess.login,
                         userid: sess.userid,

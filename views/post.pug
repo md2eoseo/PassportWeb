@@ -8,7 +8,7 @@ block page
   - var menu = 'post'
 
 block content
-    h2 Post
+    h2 글쓰기
     div= error
     div.col-md-8
       form(action="/post", method="POST", role="form")
@@ -23,4 +23,4 @@ block content
           label(for="text") Text
           textarea#text.form-control(rows="5", name="text", placeholder="Text")= text
         p
-          button.btn.btn-primary(type="submit") Save
+          button.btn.btn-primary(type="submit") 저장

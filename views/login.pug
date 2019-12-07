@@ -3,6 +3,18 @@ extends layout
 block header
   title
     | Passport |&nbsp;로그인
+  script.
+    function check() {
+      if(form.id.value == "") {
+        alert("ID를 입력해 주세요.");
+        form.id.focus();
+        return false;
+      } else if(form.password.value == "") {
+        alert("비밀번호를 입력해 주세요.");
+        form.password.focus();
+        return false;
+      } else return true;
+    }
 
 block page
   - var menu = 'login'

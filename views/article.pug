@@ -25,11 +25,16 @@ block content
               span.glyphicon.glyphicon-trash(title="Delete", aria-hidden='true')
     span(style="float: right;")
       - var postdate = post.date.default.toString().substring(0, 24);
+      
       span 작성자 :&nbsp;
         = post.userid
         | &nbsp;&nbsp;
-      span &nbsp;작성날짜 :&nbsp;
+      span &nbsp;작성일자 :&nbsp;
         = postdate
+      if(post.modate)
+        - var modate = post.modate.default.toString().substring(0, 24);
+        span &nbsp;수정일자 :&nbsp;
+          = modate
     hr(style="clear:both;")
     p
       = post.text
