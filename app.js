@@ -29,7 +29,7 @@ const methodOverride = require('method-override');
 
 var db;
 function connectDB() {
-    var databaseURL = 'mongodb://localhost:27017';
+    // var databaseURL = 'mongodb://localhost:27017';
     mongoClient.connect(process.env.MONGODB_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -39,7 +39,7 @@ function connectDB() {
                 return;
             }
             console.log('DB Connected to ' + process.env.MONGODB_URI);
-            // db = cluster.db('test'); 
+            db = cluster.db('heroku_kkdgbql2'); 
         }
     );
 }
