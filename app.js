@@ -40,8 +40,8 @@ var upload = multer({ storage: storage });
 
 var db;
 function connectDB() {
-    // var databaseURL = 'mongodb://localhost:27017';
-    var databaseURL = process.env.MONGODB_URI;
+    var databaseURL = 'mongodb://localhost:27017';
+    // var databaseURL = process.env.MONGODB_URI;
     mongoClient.connect(databaseURL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -51,8 +51,8 @@ function connectDB() {
                 return;
             }
             console.log('DB Connected to ' + databaseURL);
-            // db = cluster.db('test');
-            db = cluster.db('heroku_kkdgbql2'); 
+            db = cluster.db('test');
+            // db = cluster.db('heroku_kkdgbql2'); 
         }
     );
 }
@@ -135,6 +135,9 @@ var signup = function (db, id, password, name, mail, callback) {
 
 var postCreate = function (db, title, slug, text, file, userid, callback) {
     var posts = db.collection('post');
+    if(slug == null){
+        slug = title;
+    }
     posts.findOne({ "_id": slug }, function(err, post){
         if(err) {
             callback(err, null);

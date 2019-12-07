@@ -22,5 +22,8 @@ block content
             h2(style="margin: 0px 0px 40px 20px; height: 50px; box-sizing: border-box; text-overflow: ellipsis;")
               = post.title
             p(style="width: 270px; height: 260px; box-sizing: border-box; margin: 10px; overflow: hidden; text-overflow: ellipsis; word-break: break-all;")= post.text
+              if(post.file != null)
+                br
+                img(src='upload/' + post.file.filename, alt=post.file.filename, width="100px", style="")
             span= post.userid
             span(style="float: right;")= postdate
