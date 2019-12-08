@@ -271,6 +271,7 @@ var postEdit = function (db, title, slug, text, file_ori, file, callback){
             }
         });
     } else {
+        fs.unlink('upload/' + JSON.parse(file_ori).filename, (err) => { if (err) { console.error(err) } })
         posts.updateOne({ "_id": slug }, { $set: {
             "title": title,
             "text": text,
