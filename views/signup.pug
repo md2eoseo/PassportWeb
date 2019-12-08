@@ -3,26 +3,6 @@ extends layout
 block header
   title
     | Passport |&nbsp;회원가입
-  script(type="text/javascript").
-    function check() {
-      if(form.id.value == "") {
-        alert("아이디를 입력해 주세요.");
-        form.id.focus();
-        return false;
-      } else if(form.password.value == "") {
-        alert("비밀번호를 입력해 주세요.");
-        form.password.focus();
-        return false;
-      } else if(form.name.value == "") {
-        alert("이름을 입력해 주세요.");
-        form.name.focus();
-        return false;
-      } else if(form.mail.value == "") {
-        alert("메일을 입력해 주세요.");
-        form.mail.focus();
-        return false;
-      } else return true;
-    }
 
 block page
   - var menu = 'signup'
@@ -32,14 +12,14 @@ block content
     h2 회원가입
     div= error
     div
-      form(action="/signup", method="POST", name="form", onsubmit="return check();")
+      form(action="/signup", method="POST", name="form")
         p
-          input.form-control(name="id", type="text", placeholder="아이디")
+          input.form-control(name="id", type="text", placeholder="아이디", value=id)
         p
           input.form-control(name="password", type="password", placeholder="********")
         p
-          input.form-control(id="name", name="name", type="text", placeholder="이름")
+          input.form-control(id="name", name="name", type="text", placeholder="이름", value=name)
         p
-          input.form-control(name="mail", type="text", placeholder="example@mail.com")
+          input.form-control(name="mail", type="text", placeholder="example@mail.com", value=mail)
         p
           input.btn.btn-lg.btn-primary.btn-block(type="submit", value="회원가입")

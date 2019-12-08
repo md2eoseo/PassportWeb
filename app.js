@@ -10,8 +10,8 @@ const mongoClient = require('mongodb').MongoClient;
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const methodOverride = require('method-override');
-var multer = require('multer');
-var storage = multer.diskStorage({
+const multer = require('multer');
+const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, 'upload/')
     },
@@ -19,8 +19,7 @@ var storage = multer.diskStorage({
       cb(null, file.originalname)
     }
   });
-var upload = multer({ storage: storage });
-
+const upload = multer({ storage: storage });
 
 // DB 연결
 // var Post = require('./models/post');
@@ -52,7 +51,7 @@ function connectDB() {
             }
             console.log('DB Connected to ' + databaseURL);
             db = cluster.db('test');
-            // db = cluster.db('heroku_kkdgbql2'); 
+            // db = cluster.db('heroku_kkdgbql2');
         }
     );
 }
@@ -319,7 +318,6 @@ app.get('/', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         posts: result,
-                        msg: '' 
                     });
                 }
             }
@@ -342,7 +340,7 @@ app.get('/post', function(req, res){
         res.render('post', {
         login: sess.login,
         userid: sess.userid,
-        msg: '' 
+        msg: '글이 작성되었습니다!' 
     });
     }
 });
@@ -410,7 +408,6 @@ app.get('/mypost', function(req, res){
                             login: sess.login,
                             userid: sess.userid,
                             posts: result,
-                            msg: '' 
                         });
                     }
                 }
@@ -429,7 +426,6 @@ app.get('/login', function(req, res){
     res.render('login', {
         login: sess.login,
         userid: sess.userid,
-        msg: '' 
     });
 });
 
@@ -464,7 +460,6 @@ app.post('/login', function (req, res) {
                                     login: sess.login,
                                     userid: sess.userid,
                                     posts: result,
-                                    msg: '' 
                                 });
                             }
                         });
@@ -494,60 +489,71 @@ app.get('/signup', function(req, res){
     res.render('signup', {
         login: sess.login,
         userid: sess.userid,
-        msg: '' 
     });
 });
 
 app.post('/signup', function (req, res) {
-    var paramID = req.body.id || req.query.id;
-    var paramPW = req.body.password || req.query.password;
-    var paramName = req.body.name || req.query.name;
-    var paramMail = req.body.mail || req.query.mail;
+    const id = req.body.id || req.query.id;
+    const password = req.body.password || req.query.password;
+    const name = req.body.name || req.query.name;
+    const mail = req.body.mail || req.query.mail;
+    var errors = '';
 
-    // if(paramID==undefined || paramPW==undefined || paramName==undefined || paramMail==undefined || paramID.trim()=='' || paramPW.trim()=='' || paramName.trim()=='' || paramMail.trim()==''){
-    //     var sess = req.session;
-    //     res.render('signup', {
-    //         login: sess.login,
-    //         userid: sess.userid,
-    //         msg: '유효하지 않습니다...' 
-    //     });
-    // }
-
-    // console.log(paramID + ' ' + paramPW + ' ' + paramName + ' ' + paramMail)
-
-
-    if (db){
-        signup(db, paramID, paramPW, paramName, paramMail,
-            function (err, result)  {
-                var sess = req.session;
-                if (err) {
-                    console.log('Signup Error!!');
-                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
-                    res.write('<h1>' + err + '</h1>');
-                    res.end();
-                    return;
-                }
-                if (result) {
-                    res.render('login', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        msg: '회원가입이 완료되었습니다. 글을 작성하시려면 로그인을 해주세요.' 
-                    });
-                } else {
-                    console.log('Same Memeber Error!!');
-                    res.render('signup', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        msg: '이미 등록된 아이디입니다...' 
-                    });
-                }
-            }
-        );
+    if (!(/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/)
+    .test(String(mail)) || mail==undefined){
+        errors = '유효한 메일을 입력해주세요.';
+    }
+    if (!(/^[0-9a-zA-Z_]{1,20}/).test(String(name)) || name==undefined){
+        errors = '유효한 이름을 입력해주세요. 영문, 숫자, 기호(_)만 입력이 가능합니다. 1~20자리 제한!';
+    }
+    if (!(/^[0-9a-zA-Z_]{8,20}/).test(String(password)) || password==undefined){
+        errors = '유효한 비밀번호를 입력해주세요. 영문, 숫자, 기호(_)만 입력이 가능합니다. 8~20자리 제한!';
+    }
+    if (!(/^[0-9a-zA-Z_]{6,20}/).test(String(id)) || id==undefined){
+        errors = '유효한 아이디를 입력해주세요. 영문, 숫자, 기호(_)만 입력이 가능합니다. 6~20자리 제한!';
+    }
+    
+    if (errors != ''){
+        res.render('signup', {
+            id: id,
+            name: name,
+            mail: mail,
+            errors: errors
+        });
     } else {
-        console.log('DB Connect Error!!');
-        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
-        res.write('<h1>DB Connect Error!!</h1>');
-        res.end();
+        if (db){
+            signup(db, id, password, name, mail,
+                function (err, result)  {
+                    var sess = req.session;
+                    if (err) {
+                        console.log('Signup Error!!');
+                        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                        res.write('<h1>' + err + '</h1>');
+                        res.end();
+                        return;
+                    }
+                    if (result) {
+                        res.render('login', {
+                            login: sess.login,
+                            userid: sess.userid,
+                            msg: '회원가입이 완료되었습니다. 글을 작성하시려면 로그인을 해주세요.' 
+                        });
+                    } else {
+                        console.log('Same Memeber Error!!');
+                        res.render('signup', {
+                            login: sess.login,
+                            userid: sess.userid,
+                            msg: '이미 등록된 아이디입니다...' 
+                        });
+                    }
+                }
+            );
+        } else {
+            console.log('DB Connect Error!!');
+            res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+            res.write('<h1>DB Connect Error!!</h1>');
+            res.end();
+        }
     }
 });
 
@@ -673,7 +679,7 @@ app.get('/edit/:slug', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: '' 
+                        msg: '글이 수정되었습니다!' 
                     });
                 } else {
                     console.log('No post Error!!');
@@ -712,7 +718,6 @@ app.get('/:slug', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: '' 
                     });
                 } else {
                     console.log('No post Error!!');

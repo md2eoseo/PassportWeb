@@ -79,8 +79,10 @@ html
     #wrap(style="padding-left:20px;")
       block page
       block alert
-        if(msg!='')
+        if(msg!=null)
           div.alert.alert-info #{ msg }
+        if(errors!=null)
+          div.alert.alert-danger #{ errors }
       br
       .content
         block content
