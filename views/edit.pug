@@ -25,6 +25,7 @@ block content
         if(post.file != null)
           div.form-group
             label(for="file") 이미지 수정
+            input#file(name="file_ori", type="text", value=post.file)
             img(src=post.file.filename, alt=post.file.filename, width="280", style="float: left;margin-right:20px;")
             input#file(name="file", type="file", accept="image/jpeg, image/jpg, image/png")
             span.help-block 이미지를 업로드 하지 않으면 기존 이미지가 삭제됩니다.

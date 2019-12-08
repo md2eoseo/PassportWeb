@@ -37,10 +37,12 @@ block content
         span(style="float: right;") &nbsp;수정일자 :&nbsp;
           = modate
     hr(style="clear:both;")
-    if(post.file != null)
-      img(src=post.file.filename, alt=post.file.filename, width="400", style="float: left;margin-right:20px;")
+    
     pre(style="")
+      if(post.file != null)
+        img(src=post.file.filename, alt=post.file.filename, width="400", style="float: left;margin-right:20px;")
       = post.text
+      
 
 block footer
   script.

@@ -256,19 +256,33 @@ var postRead = function (db, slug, callback) {
     });
 }
 
-var postEdit = function (db, title, slug, text, file, callback){
+var postEdit = function (db, title, slug, text, file_ori, file, callback){
     var posts = db.collection('post');
-    posts.updateOne({ "_id": slug }, { $set: {
-        "title": title,
-        "text": text,
-        "file": file,
-        "modate": { type: Date, default: new Date() }
-    }}, { upsert: true }, function(err, result){
-        if(err) {
-            callback(err, null);
-            return;
-        }
-    });
+    if(file == null || file == undefined){
+        posts.updateOne({ "_id": slug }, { $set: {
+            "title": title,
+            "text": text,
+            "file": JSON.parse(file_ori),
+            "modate": { type: Date, default: new Date() }
+        }}, { upsert: true }, function(err, result){
+            if(err) {
+                callback(err, null);
+                return;
+            }
+        });
+    } else {
+        posts.updateOne({ "_id": slug }, { $set: {
+            "title": title,
+            "text": text,
+            "file": file,
+            "modate": { type: Date, default: new Date() }
+        }}, { upsert: true }, function(err, result){
+            if(err) {
+                callback(err, null);
+                return;
+            }
+        });
+    }
     posts.findOne({ "_id": slug }, function(err, result){
         if(err) {
             callback(err, null);
@@ -636,10 +650,11 @@ app.post('/edit', upload.single('file'), function(req, res){
     var title = req.body.title || req.query.title;
     var slug = req.body.slug || req.query.slug;
     var text = req.body.text || req.query.text;
+    var file_ori = req.body.file_ori || req.query.file_ori;
     var file = req.file;
 
     if (db){
-        postEdit(db, title, slug, text, file, function (err, result)  {
+        postEdit(db, title, slug, text, file_ori, file, function (err, result)  {
                 if (err) {
                     console.log('postEdit Error!!');
                     res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
