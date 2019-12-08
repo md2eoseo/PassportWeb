@@ -339,8 +339,7 @@ app.get('/post', function(req, res){
     } else {
         res.render('post', {
         login: sess.login,
-        userid: sess.userid,
-        msg: '글이 작성되었습니다!' 
+        userid: sess.userid
     });
     }
 });
@@ -351,39 +350,54 @@ app.post('/post', upload.single('file'), function(req, res){
     var slug = req.body.slug || req.query.slug;
     var text = req.body.text || req.query.text;
     var file = req.file;
+    var errors = '';
 
-    if (db){
-        postCreate(db, title, slug, text, file, sess.userid,
-            function (err, result)  {
-                var sess = req.session;
-                if (err) {
-                    console.log('Post Error!!');
-                    res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
-                    res.write('<h1>' + err + '</h1>');
-                    res.end();
-                    return;
-                }
-                if (result) {
-                    res.redirect('/mypost');
-                } else {
-                    console.log('Same Slug Error!!');
-                    res.render('post', {
-                        login: sess.login,
-                        userid: sess.userid,
-                        title: title,
-                        slug: slug,
-                        text: text,
-                        file: file,
-                        msg: '이미 등록된 슬러그입니다.' 
-                    });
-                }
-            }
-        );
+    if (!(/^[\-0-9a-zA-Z]/).test(String(title)) || title==undefined){
+        errors = '제목이 유효하지 않습니다...';
+    }
+    
+    if (errors != ''){
+        res.render('post', {
+            title: title,
+            slug: slug,
+            text: text,
+            file: file,
+            errors: errors
+        });
     } else {
-        console.log('DB Connect Error!!');
-        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
-        res.write('<h1>DB Connect Error!!</h1>');
-        res.end();
+        if (db){
+            postCreate(db, title, slug, text, file, sess.userid,
+                function (err, result)  {
+                    var sess = req.session;
+                    if (err) {
+                        console.log('Post Error!!');
+                        res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+                        res.write('<h1>' + err + '</h1>');
+                        res.end();
+                        return;
+                    }
+                    if (result) {
+                        res.redirect('/mypost');
+                    } else {
+                        console.log('Same Slug Error!!');
+                        res.render('post', {
+                            login: sess.login,
+                            userid: sess.userid,
+                            title: title,
+                            slug: slug,
+                            text: text,
+                            file: file,
+                            msg: '이미 등록된 슬러그입니다.' 
+                        });
+                    }
+                }
+            );
+        } else {
+            console.log('DB Connect Error!!');
+            res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+            res.write('<h1>DB Connect Error!!</h1>');
+            res.end();
+        }
     }
 });
 
