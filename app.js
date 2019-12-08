@@ -288,7 +288,7 @@ var postDelete = function(db, slug, callback){
             callback(err, null);
             return;
         }
-        if(result)
+        if(result.file != null)
             fs.unlink('upload/' + result.file.filename, (err) => { if (err) { console.error(err) } } )
     });
 
@@ -352,7 +352,7 @@ app.post('/post', upload.single('file'), function(req, res){
     var file = req.file;
     var errors = '';
 
-    if (!(/^[\-0-9a-zA-Z]/).test(String(title)) || title==undefined){
+    if (!(/^[\-0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]/).test(String(title)) || title==undefined){
         errors = '제목이 유효하지 않습니다...';
     }
     
@@ -517,13 +517,13 @@ app.post('/signup', function (req, res) {
     .test(String(mail)) || mail==undefined){
         errors = '유효한 메일을 입력해주세요.';
     }
-    if (!(/^[0-9a-zA-Z_]{1,20}/).test(String(name)) || name==undefined){
-        errors = '유효한 이름을 입력해주세요. 영문, 숫자, 기호(_)만 입력이 가능합니다. 1~20자리 제한!';
+    if (!(/[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]{1,20}/).test(String(name)) || name==undefined){
+        errors = '유효한 이름을 입력해주세요. 한글, 영문만 입력이 가능합니다. 1~20자리 제한!';
     }
-    if (!(/^[0-9a-zA-Z_]{8,20}/).test(String(password)) || password==undefined){
+    if (!(/[0-9a-zA-Z_]{8,20}/).test(String(password)) || password==undefined){
         errors = '유효한 비밀번호를 입력해주세요. 영문, 숫자, 기호(_)만 입력이 가능합니다. 8~20자리 제한!';
     }
-    if (!(/^[0-9a-zA-Z_]{6,20}/).test(String(id)) || id==undefined){
+    if (!(/[0-9a-zA-Z_]{6,20}/).test(String(id)) || id==undefined){
         errors = '유효한 아이디를 입력해주세요. 영문, 숫자, 기호(_)만 입력이 가능합니다. 6~20자리 제한!';
     }
     
