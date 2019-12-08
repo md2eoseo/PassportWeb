@@ -38,8 +38,8 @@ block content
           = modate
     hr(style="clear:both;")
     if(post.file != null)
-      img(src=post.file.filename, alt=post.file.filename, width="280", style="float: left;margin-right:20px;")
-    p(style="")
+      img(src=post.file.filename, alt=post.file.filename, width="400", style="float: left;margin-right:20px;")
+    pre(style="")
       = post.text
 
 block footer
@@ -49,4 +49,3 @@ block footer
         location.href = "/edit/" + slug;
       }
     }
-    

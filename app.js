@@ -693,7 +693,6 @@ app.get('/edit/:slug', function(req, res){
                         login: sess.login,
                         userid: sess.userid,
                         post: result,
-                        msg: '글이 수정되었습니다!' 
                     });
                 } else {
                     console.log('No post Error!!');
