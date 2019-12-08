@@ -9,18 +9,18 @@ html
     link(rel="stylesheet", href="/css/bootstrap-3.0.2/css/bootstrap.min.css")
     link(rel="stylesheet", href="/css/bootstrap-3.0.2/css/bootstrap-theme.min.css")
     link(rel="icon" type="image/x-icon" href="/assets/icon/favicon.ico")
-    script.
-      $( document ).ready( function() {
-        var jbOffset = $( '.navbar' ).offset();
-        $( window ).scroll( function() {
-          if ( $( document ).scrollTop() > jbOffset.top ) {
-            $( '.navbar' ).addClass( 'fix' );
-          }
-          else {
-            $( '.navbar' ).removeClass( 'fix' );
-          }
-        });
-      });
+    //- script.
+    //-   $( document ).ready( function() {
+    //-     var jbOffset = $( '.navbar' ).offset();
+    //-     $( window ).scroll( function() {
+    //-       if ( $( document ).scrollTop() > jbOffset.top ) {
+    //-         $( '.navbar' ).addClass( 'fix' );
+    //-       }
+    //-       else {
+    //-         $( '.navbar' ).removeClass( 'fix' );
+    //-       }
+    //-     });
+    //-   });
     style.
       .fix {
         position: fixed;
@@ -28,7 +28,7 @@ html
         width: 100%;
       }
   body
-    nav.navbar.navbar-default(style="z-index:1000;")
+    nav.navbar.navbar-default.fix(style="z-index:1000;")
       .container-fluid
         .navbar-header
           button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1')
@@ -76,6 +76,7 @@ html
                   button.btn.btn-default(type='submit') Login
               li
                 a(href='/signup') SignUp
+    div(style="height:80px;")
     #wrap(style="padding-left:20px;")
       block page
       block alert

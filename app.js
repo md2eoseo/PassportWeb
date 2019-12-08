@@ -259,19 +259,33 @@ var postRead = function (db, slug, callback) {
 var postEdit = function (db, title, slug, text, file_ori, file, callback){
     var posts = db.collection('post');
     if(file == null || file == undefined){
-        posts.updateOne({ "_id": slug }, { $set: {
-            "title": title,
-            "text": text,
-            "file": JSON.parse(file_ori),
-            "modate": { type: Date, default: new Date() }
-        }}, { upsert: true }, function(err, result){
-            if(err) {
-                callback(err, null);
-                return;
-            }
-        });
+        if(file_ori != null){
+            posts.updateOne({ "_id": slug }, { $set: {
+                "title": title,
+                "text": text,
+                "file": JSON.parse(file_ori),
+                "modate": { type: Date, default: new Date() }
+            }}, { upsert: true }, function(err, result){
+                if(err) {
+                    callback(err, null);
+                    return;
+                }
+            });
+        } else {
+            posts.updateOne({ "_id": slug }, { $set: {
+                "title": title,
+                "text": text,
+                "modate": { type: Date, default: new Date() }
+            }}, { upsert: true }, function(err, result){
+                if(err) {
+                    callback(err, null);
+                    return;
+                }
+            });
+        }
     } else {
-        fs.unlink('upload/' + JSON.parse(file_ori).filename, (err) => { if (err) { console.error(err) } })
+        if(file_ori != null)
+            fs.unlink('upload/' + JSON.parse(file_ori).filename, (err) => { if (err) { console.error(err) } })
         posts.updateOne({ "_id": slug }, { $set: {
             "title": title,
             "text": text,
