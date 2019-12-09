@@ -3,7 +3,14 @@ extends layout
 block header
   title
     | Passport |&nbsp;글 수정
-
+  script.
+    function clearFile() {
+      if(confirm('기존 이미지를 삭제하시겠습니까?')){
+        document.getElementById('file_ori').value = "";
+        document.getElementById('show_file_ori').style.display = 'none';
+        alert('삭제되었습니다!');
+      }
+    } 
 block page 
   - var menu = 'index';
 
@@ -25,8 +32,10 @@ block content
         if(post.file != null)
           div.form-group
             label(for="file") 이미지 수정
-            input#file(name="file_ori", type="text", value=post.file)
-            img(src=post.file.filename, alt=post.file.filename, width="280", style="float: left;margin-right:20px;")
+            input#file_oriname(name="file_oriname", type="hidden", value=post.file)
+            input#file_ori(name="file_ori", type="hidden", value=post.file)
+            button.btn.btn-default(type="button", onclick="clearFile()") 기존 이미지 삭제
+            img#show_file_ori(src=post.file.filename, alt=post.file.filename, width="280", style="float: left;margin-right:20px;")
             input#file(name="file", type="file", accept="image/jpeg, image/jpg, image/png")
             span.help-block 이미지를 업로드 하지 않으면 기존 이미지가 삭제됩니다.
         else
