@@ -20,6 +20,7 @@ const storage = multer.diskStorage({
   });
 const upload = multer({ storage: storage });
 const urlSlug = require('url-slug');
+const no_slug = ['login', 'logout', 'signup', 'post', 'mypost', 'search'];
 
 var db;
 function connectDB() {
@@ -109,12 +110,16 @@ var signup = function (db, id, password, name, mail, callback) {
 
 var postCreate = function (db, title, slug, text, file, userid, callback) {
     var posts = db.collection('post');
-    console.log(title);
+
     if(slug == null)
         slug = urlSlug(title);
     else
         slug = urlSlug(slug);
-    console.log(slug);
+
+    for (var i in no_slug)
+        if (slug == no_slug[i])
+            callback(null, null); return;
+
     posts.findOne({ "_id": slug }, function(err, post){
         if(err) {
             callback(err, null);
