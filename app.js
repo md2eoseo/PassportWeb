@@ -113,8 +113,6 @@ var postCreate = function (db, title, slug, text, file, userid, callback) {
 
     if(slug == null)
         slug = urlSlug(title);
-    else
-        slug = urlSlug(slug);
 
     for (var i in no_slug){
         if (slug == no_slug[i]){
