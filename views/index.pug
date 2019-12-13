@@ -12,7 +12,8 @@ block content
     | 글이 없습니다...
     br
     a(href="/login") 로그인
-    |  해서 글을 작성해주세요...
+    |  해서&nbsp;
+    a(href="/post") 글을 작성해주세요...
   else 
     .wrapper
       each post, index in posts
