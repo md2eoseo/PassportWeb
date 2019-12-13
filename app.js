@@ -116,9 +116,12 @@ var postCreate = function (db, title, slug, text, file, userid, callback) {
     else
         slug = urlSlug(slug);
 
-    for (var i in no_slug)
-        if (slug == no_slug[i])
-            callback(null, null); return;
+    for (var i in no_slug){
+        if (slug == no_slug[i]){
+            callback(null, null);
+            return;
+        }
+    }
 
     posts.findOne({ "_id": slug }, function(err, post){
         if(err) {
