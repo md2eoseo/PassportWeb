@@ -10,9 +10,10 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const methodOverride = require('method-override');
 const multer = require('multer');
+const awstorage = 'http://s3.amazonaws.com/passport2eoseo/upload/';
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, __dirname + '/upload/')
+      cb(null, 'http://s3.amazonaws.com/passport2eoseo/upload/')
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname)
@@ -20,6 +21,9 @@ const storage = multer.diskStorage({
   });
 const upload = multer({ storage: storage });
 const urlSlug = require('url-slug');
+const aws = require('aws-sdk');
+const S3_BUCKET = process.env.S3_BUCKET_NAME;
+aws.config.region = 'us-east-2';
 const no_slug = ['login', 'logout', 'signup', 'post', 'mypost', 'search'];
 
 var db;
@@ -247,7 +251,7 @@ var postEdit = function (db, title, slug, text, file_oriname, file_ori, file, ca
     if(file_ori == null || file_ori == undefined){
         if(file == null || file == undefined){
             if(file_oriname != null)
-                fs.unlink('upload/' + JSON.parse(file_oriname).filename, (err) => { if (err) { console.error(err) } })
+                fs.unlink(awstorage + JSON.parse(file_oriname).filename, (err) => { if (err) { console.error(err) } })
             posts.updateOne({ "_id": slug }, { $set: {
                 "title": title,
                 "text": text,
@@ -261,7 +265,7 @@ var postEdit = function (db, title, slug, text, file_oriname, file_ori, file, ca
             });
         } else {
             if(file_oriname != null)
-                fs.unlink('upload/' + JSON.parse(file_oriname).filename, (err) => { if (err) { console.error(err) } })
+                fs.unlink(awstorage + JSON.parse(file_oriname).filename, (err) => { if (err) { console.error(err) } })
             posts.updateOne({ "_id": slug }, { $set: {
                 "title": title,
                 "text": text,
@@ -289,7 +293,7 @@ var postEdit = function (db, title, slug, text, file_oriname, file_ori, file, ca
             });
         } else {
             if(file_ori != null)
-                fs.unlink('upload/' + JSON.parse(file_ori).filename, (err) => { if (err) { console.error(err) } })
+                fs.unlink(awstorage + JSON.parse(file_ori).filename, (err) => { if (err) { console.error(err) } })
             posts.updateOne({ "_id": slug }, { $set: {
                 "title": title,
                 "text": text,
@@ -324,7 +328,7 @@ var postDelete = function(db, slug, callback){
             return;
         }
         if(result.file != null)
-            fs.unlink('upload/' + result.file.filename, (err) => { if (err) { console.error(err) } } )
+            fs.unlink(awstorage + result.file.filename, (err) => { if (err) { console.error(err) } } )
     });
 
     posts.deleteOne({ "_id": slug }, function(err, result){
