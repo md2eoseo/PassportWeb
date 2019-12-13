@@ -24,8 +24,8 @@ const no_slug = ['login', 'logout', 'signup', 'post', 'mypost', 'search'];
 
 var db;
 function connectDB() {
-    var databaseURL = 'mongodb://localhost:27017';
-    // var databaseURL = process.env.MONGODB_URI;
+    // var databaseURL = 'mongodb://localhost:27017';
+    var databaseURL = process.env.MONGODB_URI;
     mongoClient.connect(databaseURL, {
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -35,8 +35,8 @@ function connectDB() {
                 return;
             }
             console.log('DB Connected to ' + databaseURL);
-            db = cluster.db('test');
-            // db = cluster.db('heroku_kkdgbql2');
+            // db = cluster.db('test');
+            db = cluster.db('heroku_kkdgbql2');
         }
     );
 }
@@ -333,6 +333,23 @@ var postDelete = function(db, slug, callback){
     });
 }
 
+// var userSetting = function(db, userid, callback){
+//     var members = db.collection("member");
+//     members.findOne({ "_id": userid }, function (err, doc) {
+//         if (err) {
+//             callback(err, null);
+//             return;
+//         }
+//         if (doc.length > 0) {
+//             console.log('found user!!');
+//             callback(null, doc);
+//         } else {
+//             console.log('cannot find user!!');
+//             callback(null, null);
+//         }
+//     });
+// }
+
 // route 정의
 app.get('/', function(req, res){
     if (db){
@@ -591,6 +608,48 @@ app.get('/edit/:slug', function(req, res){
         res.end();
     }
 });
+
+// app.get('/setting', function(req, res){
+//     var sess = req.session;
+
+//     if (db){
+//         userSetting(db, sess.userid, function (err, user)  {
+//                 if(sess.login != true || sess.userid != user.userid){
+//                     res.render('index', {
+//                         msg: '접근 불가!!' 
+//                     });
+//                 }
+
+//                 if (err) {
+//                     console.log('userSetting Error!!');
+//                     res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+//                     res.write('<h1>' + err + '</h1>');
+//                     res.end();
+//                     return;
+//                 }
+//                 if (user) {
+//                     res.render('setting', {
+//                         login: sess.login,
+//                         userid: sess.userid,
+//                         user: user,
+//                     });
+//                 } else {
+//                     console.log('No user Error!!');
+//                     res.render('index', {
+//                         login: sess.login,
+//                         userid: sess.userid,
+//                         msg: '존재하지 않는 사용자입니다...' 
+//                     });
+//                 }
+//             }
+//         );
+//     } else {
+//         console.log('DB Connect Error!!');
+//         res.writeHead(200, { "Content-Type": "text/html;charset=utf8" });
+//         res.write('<h1>DB Connect Error!!</h1>');
+//         res.end();
+//     }
+// });
 
 app.get('/login', function(req, res){
     var sess = req.session;

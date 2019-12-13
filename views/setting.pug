@@ -1,0 +1,51 @@
+extends layout
+
+block header
+  title
+    | Passport |&nbsp;정보 수정
+
+block page
+  - var menu = 'setting'
+
+block content
+  div.mypost
+    if (login == false || login == null )
+      p
+        | 접근할 수 없습니다.
+        a(href="/login") 로그인 해주세요.
+    else
+      table.table.table-stripped
+        thead
+          tr
+            th 항목
+            th 정보
+        tbody
+          tr
+            td
+              h3 아이디
+            td
+              h3= user._id
+          tr
+            td
+              h3 비밀번호
+            td
+              h3= user.password
+          tr
+            td
+              h3 이름
+            td
+              h3= user.name
+          tr
+            td
+              h3 메일
+            td
+              h3= user.mail
+                  
+block footer
+  script.
+    function user_edit() { 
+      if(confirm("회원 정보를 수정하시겠습니까?")){
+        location.href = "/edit";
+      }
+    }
+    
